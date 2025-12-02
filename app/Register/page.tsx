@@ -7,6 +7,8 @@ import { apiPost } from "@/lib/api";
 import type { RegisterRequest, RegisterResponse } from "@/types/auth";
 import { useLocationData } from "@/hooks/useLocationData";
 import { registerSchema } from "@/schemas/registerSchema";
+import { setTimeout } from "timers";
+import { ModalSuccess } from "../components/modal/ModalSuccess";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -28,8 +30,10 @@ export default function RegisterPage() {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
 
-  // Custom hook para manejar la carga de ubicaciones
   const {
     countries,
     provinces,
@@ -41,10 +45,6 @@ export default function RegisterPage() {
     resetCities,
   } = useLocationData(form.idCountry, form.idProvince);
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [error, setError] = useState<string | null>(null);
-
-  // Generic handler for input changes (text inputs)
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -64,7 +64,6 @@ export default function RegisterPage() {
     const numeric = value === "" || value === "0" ? 0 : Number(value);
 
     if (name === "idCountry") {
-      // Reset provincia y ciudad cuando cambia el país
       setForm((prev) => ({
         ...prev,
         idCountry: numeric,
@@ -89,21 +88,23 @@ export default function RegisterPage() {
   function validateForm(): boolean {
     // Validar con Zod usando safeParse
     const result = registerSchema.safeParse(form);
-    
+
     if (result.success) {
       setErrors({});
       return true;
     }
-    
+
     // Manejar errores de Zod
     const newErrors: Record<string, string> = {};
-    result.error.errors.forEach((err: { path: (string | number)[]; message: string }) => {
-      const field = err.path[0] as string;
-      if (field) {
-        newErrors[field] = err.message;
-      }
-    });
-    
+    result.error.errors.forEach(
+      (err: { path: (string | number)[]; message: string }) => {
+        const field = err.path[0] as string;
+        if (field) {
+          newErrors[field] = err.message;
+        }
+      },
+    );
+
     setErrors(newErrors);
     return false;
   }
@@ -126,8 +127,13 @@ export default function RegisterPage() {
         RegisterRequest
       >("User/CreateUser", form);
 
-      // Registro OK → redirigimos al login
-      router.push("/login?registered=true");
+      if (res.id !== null || res.id !== undefined || res.id !== "") {
+        setShowSuccess(true);
+
+        setTimeout(() => {
+          router.push("/Login");
+        }, 3000);
+      }
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "No se pudo crear el usuario",
@@ -163,6 +169,8 @@ export default function RegisterPage() {
       {error && (
         <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>
       )}
+
+      {showSuccess && <ModalSuccess message="Usuario creado exitosamente" />}
 
       <form onSubmit={handleRegister} className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-2 gap-4">
