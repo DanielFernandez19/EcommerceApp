@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TextInput } from "../components/form/TextInput";
-import { Select, OptionItem } from "../components/form/Select";
+import { TextInput } from "@/components/ui/TextInput";
+import { Select, OptionItem } from "@/components/ui/Select";
 import { apiPost } from "@/lib/api";
 import type { RegisterRequest, RegisterResponse } from "@/types/auth";
 import { useLocationData } from "@/hooks/useLocationData";
-import { registerSchema } from "@/schemas/registerSchema";
+import { registerSchema } from "@/schemas/auth";
 import { setTimeout } from "timers";
-import { ModalSuccess } from "../components/modal/ModalSuccess";
+import { ModalSuccess } from "@/components/ui/ModalSuccess";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function RegisterPage() {
     name: "",
     lastName: "",
     email: "",
-    emailconfirmed: "",
+    emailConfirmed: "",
     password: "",
     phoneNumber: "",
     billingAddress: "",
@@ -131,7 +131,7 @@ export default function RegisterPage() {
         setShowSuccess(true);
 
         setTimeout(() => {
-          router.push("/Login");
+          router.push("/login");
         }, 3000);
       }
     } catch (err: unknown) {
@@ -205,7 +205,7 @@ export default function RegisterPage() {
           <TextInput
             name="emailconfirmed"
             label="Confirmar email"
-            value={form.emailconfirmed}
+            value={form.emailConfirmed}
             type="email"
             onChange={handleChange}
             required

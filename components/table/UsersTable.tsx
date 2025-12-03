@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiGet } from "@/lib/api";
 import { User } from "@/types/user";
-import Table from "app/components/table/Table";
+import Table from "@/components/table/Table";
 import { useRouter } from "next/navigation";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 
@@ -24,11 +24,10 @@ export default function UsersTable() {
   }, []);
 
   return (
-    <div className="container mx-auto">
-      <h1>Gestión de usuarios</h1>
+    <div>
       <Table<User>
         data={usersData}
-        columns={["id", "name", "email"]}
+        columns={["name", "lastName", "email"]}
         actions={[
           {
             label: "Editar",

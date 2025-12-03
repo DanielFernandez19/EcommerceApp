@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { apiPost } from "@/lib/api";
+import { apiPost } from "@/lib/api_old";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export default function LoginPage() {
       );
 
       localStorage.setItem("auth", JSON.stringify(res));
-      router.push("/user");
+      router.push("/dashboard/users");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -65,7 +65,7 @@ export default function LoginPage() {
       <div>
         <p className="text-center text-sm">
           ¿No tienes cuenta?{" "}
-          <Link href="/R  egister" className="text-violet-600 hover:underline">
+          <Link href="/register" className="text-violet-600 hover:underline">
             Regístrate aquí
           </Link>
         </p>
