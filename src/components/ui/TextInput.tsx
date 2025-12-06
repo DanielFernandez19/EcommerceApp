@@ -30,8 +30,8 @@ export function TextInput({
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium">
-          {label} {required ? <span aria-hidden> *</span> : null}
+        <label htmlFor={inputId} className="text-sm font-medium text-gray-300">
+          {label} {required ? <span className="text-violet-400">*</span> : null}
         </label>
       )}
 
@@ -44,11 +44,11 @@ export function TextInput({
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className="bg-background border border-white rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all disabled:opacity-50"
       />
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600 mt-1">
+        <p role="alert" className="text-sm text-red-400 mt-1">
           {error}
         </p>
       ) : null}

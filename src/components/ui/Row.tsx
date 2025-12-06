@@ -1,3 +1,4 @@
+import React from "react";
 import { TableAction } from "@/types/tableActions";
 
 interface RowProps<T extends object> {

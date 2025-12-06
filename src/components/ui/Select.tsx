@@ -1,4 +1,4 @@
-export type OptionItem = { id: number | string; name: string };
+import type { OptionItem } from "@/types/ui";
 
 type SelectProps = {
   id?: string;
@@ -32,8 +32,8 @@ export function Select({
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label htmlFor={selectId} className="text-sm font-medium">
-          {label} {required ? <span aria-hidden> *</span> : null}
+        <label htmlFor={selectId} className="text-sm font-medium text-gray-300">
+          {label} {required ? <span className="text-violet-400">*</span> : null}
         </label>
       )}
 
@@ -43,18 +43,18 @@ export function Select({
         value={value}
         onChange={onChange}
         disabled={disabled || loading}
-        className="bg-background border border-white rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all disabled:opacity-50"
       >
-        <option value="">{loading ? "Cargando..." : "Seleccione..."}</option>
+        <option value="" className="bg-gray-700">{loading ? "Cargando..." : "Seleccione..."}</option>
         {options.map((opt) => (
-          <option key={String(opt.id)} value={opt.id}>
+          <option key={String(opt.id)} value={opt.id} className="bg-gray-700">
             {opt.name}
           </option>
         ))}
       </select>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600 mt-1">
+        <p role="alert" className="text-sm text-red-400 mt-1">
           {error}
         </p>
       ) : null}
