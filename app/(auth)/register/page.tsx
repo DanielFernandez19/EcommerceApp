@@ -1,14 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TextInput } from "@/components/ui/TextInput";
-import { Select, OptionItem } from "@/components/ui/Select";
+import { TextInput, Select, ModalSuccess } from "@/components/ui";
 import { apiPost } from "@/lib/api";
-import type { RegisterRequest, RegisterResponse } from "@/types/auth";
+import type { RegisterRequest, RegisterResponse, OptionItem } from "@/types";
 import { useLocationData } from "@/hooks/useLocationData";
-import { registerSchema } from "@/schemas/auth";
+import { registerSchema } from "@/schemas/registerSchema";
 import { setTimeout } from "timers";
-import { ModalSuccess } from "@/components/ui/ModalSuccess";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,7 +16,7 @@ export default function RegisterPage() {
     name: "",
     lastName: "",
     email: "",
-    emailConfirmed: "",
+    emailconfirmed: "",
     password: "",
     phoneNumber: "",
     billingAddress: "",
@@ -26,7 +25,7 @@ export default function RegisterPage() {
     idCountry: 0,
     idProvince: 0,
     idCity: 0,
-    idRole: 3,
+    idRole: 3, // User role
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -131,7 +130,7 @@ export default function RegisterPage() {
         setShowSuccess(true);
 
         setTimeout(() => {
-          router.push("/login");
+          router.push("/Login");
         }, 3000);
       }
     } catch (err: unknown) {
@@ -163,139 +162,205 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-xl font-semibold mb-4">Crear cuenta</h1>
-
-      {error && (
-        <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>
-      )}
-
-      {showSuccess && <ModalSuccess message="Usuario creado exitosamente" />}
-
-      <form onSubmit={handleRegister} className="grid grid-cols-1 gap-4">
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput
-            name="name"
-            label="Nombre"
-            value={form.name}
-            onChange={handleChange}
-            required
-            error={errors.name}
-          />
-          <TextInput
-            name="lastName"
-            label="Apellido"
-            value={form.lastName}
-            onChange={handleChange}
-            required
-            error={errors.lastName}
-          />
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-violet-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">Crear cuenta</h1>
+          <p className="text-gray-400">
+            Completa el formulario para registrarte
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput
-            name="email"
-            label="Email"
-            value={form.email}
-            type="email"
-            onChange={handleChange}
-            required
-            error={errors.email}
-          />
-          <TextInput
-            name="emailconfirmed"
-            label="Confirmar email"
-            value={form.emailConfirmed}
-            type="email"
-            onChange={handleChange}
-            required
-            error={errors.emailconfirmed}
-          />
+        {error && (
+          <div className="bg-red-900/50 border border-red-700 text-red-300 p-4 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {showSuccess && <ModalSuccess message="Usuario creado exitosamente" />}
+
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-8">
+          <form onSubmit={handleRegister} className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-2 gap-4">
+              <TextInput
+                name="name"
+                label="Nombre"
+                value={form.name}
+                onChange={handleChange}
+                required
+                error={errors.name}
+              />
+              <TextInput
+                name="lastName"
+                label="Apellido"
+                value={form.lastName}
+                onChange={handleChange}
+                required
+                error={errors.lastName}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <TextInput
+                name="email"
+                label="Email"
+                value={form.email}
+                type="email"
+                onChange={handleChange}
+                required
+                error={errors.email}
+              />
+              <TextInput
+                name="emailconfirmed"
+                label="Confirmar email"
+                value={form.emailconfirmed}
+                type="email"
+                onChange={handleChange}
+                required
+                error={errors.emailconfirmed}
+              />
+            </div>
+
+            <TextInput
+              name="password"
+              label="Contraseña"
+              value={form.password}
+              type="password"
+              onChange={handleChange}
+              required
+              error={errors.password}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <TextInput
+                name="phoneNumber"
+                label="Teléfono"
+                value={form.phoneNumber}
+                onChange={handleChange}
+              />
+              <TextInput
+                name="postalCode"
+                label="Código postal"
+                value={form.postalCode}
+                onChange={handleChange}
+              />
+            </div>
+
+            <TextInput
+              name="billingAddress"
+              label="Dirección de facturación"
+              value={form.billingAddress}
+              onChange={handleChange}
+            />
+            <TextInput
+              name="billingAddress2"
+              label="Dirección (detalle)"
+              value={form.billingAddress2}
+              onChange={handleChange}
+            />
+
+            <div className="grid grid-cols-3 gap-4">
+              <Select
+                name="idCountry"
+                label="País"
+                value={getSelectValue(form.idCountry)}
+                options={countryOptions}
+                onChange={handleSelectChange}
+                loading={loadingCountries}
+                required
+                error={errors.idCountry}
+              />
+              <Select
+                name="idProvince"
+                label="Provincia"
+                value={getSelectValue(form.idProvince)}
+                options={provinceOptions}
+                onChange={handleSelectChange}
+                loading={loadingProvinces}
+                required
+                disabled={!form.idCountry || loadingProvinces}
+                error={errors.idProvince}
+              />
+              <Select
+                name="idCity"
+                label="Ciudad"
+                value={getSelectValue(form.idCity)}
+                options={cityOptions}
+                onChange={handleSelectChange}
+                loading={loadingCities}
+                required
+                disabled={!form.idProvince || loadingCities}
+                error={errors.idCity}
+              />
+            </div>
+
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full bg-violet-600 text-white font-medium py-3 rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Creando cuenta...
+                  </span>
+                ) : (
+                  "Crear cuenta"
+                )}
+              </button>
+            </div>
+          </form>
         </div>
 
-        <TextInput
-          name="password"
-          label="Contraseña"
-          value={form.password}
-          type="password"
-          onChange={handleChange}
-          required
-          error={errors.password}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput
-            name="phoneNumber"
-            label="Teléfono"
-            value={form.phoneNumber}
-            onChange={handleChange}
-          />
-          <TextInput
-            name="postalCode"
-            label="Código postal"
-            value={form.postalCode}
-            onChange={handleChange}
-          />
+        {/* Login link */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-400 text-sm">
+            ¿Ya tienes cuenta?{" "}
+            <Link
+              href="/Login"
+              className="text-violet-400 hover:text-violet-300 transition-colors"
+            >
+              Inicia sesión aquí
+            </Link>
+          </p>
         </div>
-
-        <TextInput
-          name="billingAddress"
-          label="Dirección de facturación"
-          value={form.billingAddress}
-          onChange={handleChange}
-        />
-        <TextInput
-          name="billingAddress2"
-          label="Dirección (detalle)"
-          value={form.billingAddress2}
-          onChange={handleChange}
-        />
-
-        <div className="grid grid-cols-3 gap-4">
-          <Select
-            name="idCountry"
-            label="País"
-            value={getSelectValue(form.idCountry)}
-            options={countryOptions}
-            onChange={handleSelectChange}
-            loading={loadingCountries}
-            required
-            error={errors.idCountry}
-          />
-          <Select
-            name="idProvince"
-            label="Provincia"
-            value={getSelectValue(form.idProvince)}
-            options={provinceOptions}
-            onChange={handleSelectChange}
-            loading={loadingProvinces}
-            required
-            disabled={!form.idCountry || loadingProvinces}
-            error={errors.idProvince}
-          />
-          <Select
-            name="idCity"
-            label="Ciudad"
-            value={getSelectValue(form.idCity)}
-            options={cityOptions}
-            onChange={handleSelectChange}
-            loading={loadingCities}
-            required
-            disabled={!form.idProvince || loadingCities}
-            error={errors.idCity}
-          />
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? "Creando cuenta..." : "Crear cuenta"}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
