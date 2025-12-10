@@ -42,7 +42,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`flex flex-col gap-1 ${className}`}>
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={inputId} className="text-sm font-medium text-white">
             {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
@@ -54,25 +54,26 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           type={type}
           value={value}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
           required={required}
           disabled={disabled}
-          autoComplete={autoComplete}
-          className={`
+            className={`
             px-3 py-2 border rounded-lg text-sm
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
             disabled:opacity-50 disabled:cursor-not-allowed
+            bg-gray-700 text-white border-gray-600
             ${error 
               ? "border-red-500 focus:ring-red-500" 
-              : "border-gray-300"
+              : "border-gray-600"
             }
           `}
           {...props}
         />
 
         {error && (
-          <p role="alert" className="text-sm text-red-600 mt-1">
+          <p role="alert" className="text-sm text-red-400 mt-1">
             {error}
           </p>
         )}

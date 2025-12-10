@@ -19,6 +19,7 @@ interface UseFormReturn<T> {
   handleSubmit: (e?: React.FormEvent) => Promise<void>;
   resetForm: () => void;
   setFieldValue: (field: keyof T, value: any) => void;
+  setValues: (values: T) => void;
   setError: (field: keyof T, error: string) => void;
   clearErrors: () => void;
 }
@@ -131,6 +132,11 @@ export function useForm<T extends Record<string, any>>({
     setValues(prev => ({ ...prev, [field]: value }));
   }, []);
 
+  // Setear todos los valores
+  const setAllValues = useCallback((newValues: T) => {
+    setValues(newValues);
+  }, []);
+
   // Setear error específico
   const setError = useCallback((field: keyof T, error: string) => {
     setErrors(prev => ({ ...prev, [field]: error }));
@@ -155,6 +161,7 @@ export function useForm<T extends Record<string, any>>({
     handleSubmit,
     resetForm,
     setFieldValue,
+    setValues: setAllValues,
     setError,
     clearErrors,
   };

@@ -1,47 +1,132 @@
-// src/lib/api.ts
+// lib/api.ts
+import type { ApiError } from "@/types/api";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 /**
- * GET genérico
+ * Cliente HTTP mejorado con error handling consistente
  */
-export async function apiGet<T>(path: string): Promise<T> {
-  const url = `${API_BASE.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) {
-    // intentar leer body JSON del error (si lo tiene)
-    const body = await res.json().catch(() => null);
-    throw {
-      status: res.status,
-      message: body?.message ?? `HTTP ${res.status}`,
-      body,
-    };
+class ApiClient {
+  private baseURL: string;
+
+  constructor(baseURL: string) {
+    this.baseURL = baseURL.replace(/\/$/, "");
   }
-  return (await res.json()) as T;
+
+  private async request<T>(
+    path: string,
+    options: RequestInit = {},
+  ): Promise<T> {
+    const url = `${this.baseURL}/${path.replace(/^\//, "")}`;
+
+    // Configurar headers por defecto
+    const defaultHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    // Obtener token de las cookies
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; auth_token=`);
+    if (parts.length === 2) {
+      const token = parts.pop()?.split(';').shift();
+      if (token) {
+        defaultHeaders["Authorization"] = `Bearer ${token}`;
+      }
+    }
+
+    const config: RequestInit = {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
+      },
+    };
+
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const error: ApiError = {
+          status: response.status,
+          message: data?.message || `HTTP ${response.status}`,
+          body: data,
+        };
+
+        // Loguear error para debugging
+        console.error(`API Error [${options.method || "GET"} ${path}]:`, error);
+
+        throw error;
+      }
+
+      return data as T;
+    } catch (error) {
+      // Si ya es un ApiError, relanzarlo
+      if (error && typeof error === "object" && "status" in error) {
+        throw error;
+      }
+
+      // Si es un error de red u otro
+      const networkError: ApiError = {
+        status: 0,
+        message: error instanceof Error ? error.message : "Network error",
+      };
+
+      console.error(
+        `Network Error [${options.method || "GET"} ${path}]:`,
+        error,
+      );
+      throw networkError;
+    }
+  }
+
+  /**
+   * GET request
+   */
+  async get<T>(path: string): Promise<T> {
+    return this.request<T>(path, { method: "GET" });
+  }
+
+  /**
+   * POST request
+   */
+  async post<TResponse, TBody = unknown>(
+    path: string,
+    body: TBody,
+  ): Promise<TResponse> {
+    return this.request<TResponse>(path, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * PUT request
+   */
+  async put<TResponse, TBody = unknown>(
+    path: string,
+    body: TBody,
+  ): Promise<TResponse> {
+    return this.request<TResponse>(path, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * DELETE request
+   */
+  async delete<T>(path: string): Promise<T> {
+    return this.request<T>(path, { method: "DELETE" });
+  }
 }
 
-/**
- * POST genérico
- */
-export async function apiPost<TResponse, TBody = unknown>(
+// Exportar instancia única
+export const apiClient = new ApiClient(API_BASE);
+
+// Exportar funciones por compatibilidad (deprecated)
+export const apiGet = <T>(path: string) => apiClient.get<T>(path);
+export const apiPost = <TResponse, TBody = unknown>(
   path: string,
   body: TBody,
-): Promise<TResponse> {
-  const url = `${API_BASE.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json().catch(() => null);
-
-  if (!res.ok) {
-    throw {
-      status: res.status,
-      message: data?.message ?? `HTTP ${res.status}`,
-      body: data,
-    };
-  }
-
-  return data as TResponse;
-}
+) => apiClient.post<TResponse, TBody>(path, body);

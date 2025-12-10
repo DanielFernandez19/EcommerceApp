@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiMenu, FiSettings } from "react-icons/fi";
+import DashboardUserDropdown from "./DashboardUserDropdown";
 
 interface TopBarProps {
   pathname: string;
@@ -10,11 +11,11 @@ interface TopBarProps {
   showMenuButton?: boolean;
 }
 
-export default function TopBar({ 
-  pathname, 
-  onMenuOpen, 
-  showBreadcrumb = false, 
-  showMenuButton = false 
+export default function TopBar({
+  pathname,
+  onMenuOpen,
+  showBreadcrumb = false,
+  showMenuButton = false,
 }: TopBarProps) {
   const menuItems = [
     {
@@ -29,10 +30,6 @@ export default function TopBar({
       title: "Stock",
       href: "/dashboard/abm/stock",
     },
-    {
-      title: "Configuración",
-      href: "/dashboard/settings",
-    }
   ];
 
   return (
@@ -48,17 +45,32 @@ export default function TopBar({
               <FiMenu className="w-5 h-5" />
             </button>
           )}
-          
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
+
+          {/* Logo - Igual que el landing */}
+          <Link
+            href="/"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center">
-              <FiSettings className="w-6 h-6 text-white" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Admin Panel</h2>
-              <p className="text-xs text-gray-400">Dashboard</p>
+              <h2 className="text-lg font-bold text-white">MiEcommerce</h2>
+              <p className="text-xs text-gray-400">Admin Panel</p>
             </div>
-          </div>
+          </Link>
 
           {/* Breadcrumb */}
           {showBreadcrumb && (
@@ -68,7 +80,8 @@ export default function TopBar({
               </Link>
               <span>/</span>
               <span className="text-white">
-                {menuItems.find(item => item.href === pathname)?.title || 'Página actual'}
+                {menuItems.find((item) => item.href === pathname)?.title ||
+                  "Página actual"}
               </span>
             </nav>
           )}
@@ -76,20 +89,8 @@ export default function TopBar({
 
         {/* User section */}
         <div className="flex items-center space-x-4">
-          <button className="p-2 rounded-lg hover:bg-gray-700 relative text-gray-300">
-            <div className="w-2 h-2 bg-red-500 rounded-full absolute top-2 right-2"></div>
-            <FiSettings className="w-5 h-5" />
-          </button>
-          
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-violet-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">A</span>
-            </div>
-            <div className="hidden md:block">
-              <div className="text-sm font-medium text-white">Admin User</div>
-              <div className="text-xs text-gray-400">admin@urbanstyle.com</div>
-            </div>
-          </div>
+          <button className="p-2 rounded-lg hover:bg-gray-700 relative text-gray-300"></button>
+          <DashboardUserDropdown />
         </div>
       </div>
     </header>

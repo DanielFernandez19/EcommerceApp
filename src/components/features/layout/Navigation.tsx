@@ -2,9 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import UserDropdown from "./UserDropdown";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isAuthenticated, initializing, user } = useAuthContext();
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,20 +50,34 @@ export default function Navigation() {
             <span className="text-white font-bold text-lg">MiEcommerce</span>
           </Link>
 
-          {/* Botones de autenticación */}
+          {/* Estado de autenticación */}
           <div className="flex items-center space-x-4">
-            <Link
-              href="/login"
-              className="text-violet-300 hover:text-white px-4 py-2 rounded-lg hover:bg-violet-600/20 transition-all duration-200 font-medium"
-            >
-              Iniciar Sesión
-            </Link>
-            <Link
-              href="/register"
-              className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all duration-200 font-medium shadow-lg hover:shadow-violet-500/25"
-            >
-              Crear Cuenta
-            </Link>
+            {initializing ? (
+              // Skeleton loading mientras inicializa
+              <div className="flex items-center space-x-4">
+                <div className="w-20 h-8 bg-gray-700 rounded-lg animate-pulse"></div>
+                <div className="w-24 h-8 bg-violet-600 rounded-lg animate-pulse"></div>
+              </div>
+            ) : isAuthenticated ? (
+              // Usuario logueado - mostrar dropdown
+              <UserDropdown />
+            ) : (
+              // Usuario no logueado - mostrar botones de login/register
+              <>
+                <Link
+                  href="/login"
+                  className="text-violet-300 hover:text-white px-4 py-2 rounded-lg hover:bg-violet-600/20 transition-all duration-200 font-medium"
+                >
+                  Iniciar Sesión
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all duration-200 font-medium shadow-lg hover:shadow-violet-500/25"
+                >
+                  Crear Cuenta
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

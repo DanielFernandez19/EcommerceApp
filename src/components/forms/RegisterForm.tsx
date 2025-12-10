@@ -8,7 +8,8 @@ import type { RegisterFormData } from "@/schemas/auth";
 import type { RegisterResponse } from "@/types/auth";
 import { useLocationData } from "@/hooks/useLocationData";
 import { Input } from "@/components/ui/Input";
-import { Select, type OptionItem } from "@/components/ui/Select";
+import { Select } from "@/components/ui/Select";
+import type { OptionItem } from "@/types/OptionItem";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 

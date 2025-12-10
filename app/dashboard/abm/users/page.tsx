@@ -55,13 +55,18 @@ export default function UsersPage() {
               label: "Ver",
               color: "bg-green-600 hover:bg-green-700",
               icon: <FaEye />,
-              onClick: (user: User) => console.log("Ver usuario", user),
+              onClick: (user: User) => router.push(`/dashboard/abm/users/view/${user.id}`),
             },
             {
               label: "Borrar",
               color: "bg-red-600 hover:bg-red-700",
               icon: <FaTrash />,
-              onClick: (user: User) => console.log("delete", user.id),
+              onClick: (user: User) => {
+                if (window.confirm(`¿Estás seguro de eliminar a ${user.name}?`)) {
+                  // TODO: Implementar delete con API call
+                  console.log(`Implementar delete para usuario ${user.id}`);
+                }
+              },
             },
           ]}
         />

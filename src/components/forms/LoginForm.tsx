@@ -2,17 +2,18 @@
 "use client";
 
 import { useForm } from "@/hooks/useForm";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 import { loginSchema } from "@/schemas/auth";
 import type { LoginFormData } from "@/schemas/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { apiClient } from "@/lib/api";
 
 export function LoginForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { setUser } = useAuthContext();
 
   const form = useForm<LoginFormData>({
     initialValues: {
@@ -22,12 +23,30 @@ export function LoginForm() {
     schema: loginSchema,
     onSubmit: async (values) => {
       try {
-        await login(values);
-        router.push("/dashboard/users");
+        // Hacer login directo con la API
+        const response = await apiClient.post<any, LoginFormData>("auth/login", values);
+        
+        // Guardar token en cookie
+        document.cookie = `auth_token=${response.token}; path=/; max-age=86400; secure; samesite=strict`;
+        
+        // Guardar datos del usuario en cookie
+        const userData = {
+          id: response.id,
+          email: response.email,
+          fullName: response.fullName || response.email,
+          idRole: response.idRole || 1, // Default a 1 si no viene
+          token: response.token
+        };
+        document.cookie = `auth_user=${encodeURIComponent(JSON.stringify(userData))}; path=/; max-age=86400; secure; samesite=strict`;
+        
+        // Actualizar el contexto
+        setUser(userData);
+        
+        // Redirigir al dashboard
+        router.push("/dashboard");
       } catch (error) {
-        // El error ya se maneja en el hook useAuth
-        // Podríamos mostrar un toast aquí
         console.error("Login failed:", error);
+        throw error; // Dejar que el useForm maneje el error
       }
     },
   });

@@ -7,7 +7,13 @@ export interface LoginRequest {
 export interface LoginResponse {
   id: string;
   email: string;
+  fullName: string;
   token: string;
+  idRole: number; // Viene directo del backend
+  role?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface RegisterRequest {
@@ -34,4 +40,10 @@ export interface RegisterResponse {
     id: number;
     name: string;
   };
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  token: string;
 }

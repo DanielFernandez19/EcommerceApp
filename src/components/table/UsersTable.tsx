@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiGet } from "@/lib/api";
 import { User } from "@/types/user";
-import Table from "@/components/table/Table";
+import { Table } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 
@@ -39,13 +39,19 @@ export default function UsersTable() {
             label: "Ver",
             color: "bg-green-600 hover:bg-green-500",
             icon: <FaEye />,
-            onClick: (user: User) => console.log("Ver usuario", user),
+            onClick: (user: User) => router.push(`/users/view/${user.id}`),
           },
           {
             label: "Borrar",
             color: "bg-red-600 hover:bg-red-500",
             icon: <FaTrash />,
-            onClick: (user: User) => console.log("delete", user.id),
+            onClick: (user: User) => {
+              // TODO: Implementar delete con confirmación
+              if (window.confirm(`¿Estás seguro de eliminar a ${user.name}?`)) {
+                // Implementar llamada a API para eliminar
+                console.log(`Implementar delete para usuario ${user.id}`);
+              }
+            },
           },
         ]}
       />

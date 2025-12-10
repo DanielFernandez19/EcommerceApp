@@ -1,4 +1,4 @@
-import type { OptionItem } from "@/types/ui";
+import type { OptionItem } from "@/types/OptionItem";
 
 type SelectProps = {
   id?: string;

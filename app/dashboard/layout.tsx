@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { usePathname } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 import Sidebar from "@/components/features/dashboard/Sidebar";
 import TopBar from "@/components/features/dashboard/TopBar";
 
@@ -10,16 +10,45 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+function DashboardContent({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const router = useRouter();
+  const { user, logout, initializing } = useAuthContext();
+
+  // Validar acceso y redirigir si es necesario - UN SOLO useEffect
+  useEffect(() => {
+    if (!initializing) {
+      // Si no hay usuario o no tiene permisos de admin
+      if (!user || ![1, 2].includes(user.idRole)) {
+        router.push('/');
+        return;
+      }
+    }
+  }, [user, initializing, router]);
+
+  // Si está inicializando, mostrar loading breve
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay usuario o no tiene permisos, no renderizar nada (la redirección ocurrirá en el useEffect)
+  if (!user || ![1, 2].includes(user.idRole)) {
+    return null;
+  }
 
   // Determinar qué layout mostrar
   const isABMPage = pathname.startsWith('/dashboard/abm');
   const isDashboardHome = pathname === '/dashboard';
 
-  return (
+return (
     <div className="min-h-screen bg-gray-900">
       {/* ===== LAYOUT PARA PÁGINAS ABM ===== */}
       {isABMPage && (
@@ -38,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               showBreadcrumb={true}
               showMenuButton={true}
             />
-            
+             
             <main className="flex-1 p-6 overflow-auto">
               {children}
             </main>
@@ -63,4 +92,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
     </div>
   );
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  return <DashboardContent>{children}</DashboardContent>;
 }

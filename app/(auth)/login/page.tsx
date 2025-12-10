@@ -3,24 +3,45 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import { login } from "@/utils/auth";
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { login, loading, error, clearError } = useAuth();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    clearError();
+    setLoading(true);
+    setError(null);
 
     try {
-      await login(email, password);
-      router.push("/dashboard");
+      const user = await login(email, password);
+      
+      // Redirigir según el rol
+      if ([1, 2].includes(user.idRole)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/');
+      }
     } catch (err: unknown) {
-      // El error ya se maneja en el store
-      console.error("Login failed:", err);
+      let errorMessage = "Error desconocido";
+      
+      if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('body' in err && err.body && typeof err.body === 'object' && 'message' in err.body) {
+          errorMessage = String(err.body.message);
+        }
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -61,7 +82,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder="••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
@@ -99,7 +120,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center space-y-2">
           <p className="text-gray-400 text-sm">
             ¿No tienes cuenta?{" "}
-            <Link href="/Register" className="text-violet-400 hover:text-violet-300 transition-colors">
+            <Link href="/register" className="text-violet-400 hover:text-violet-300 transition-colors">
               Regístrate aquí
             </Link>
           </p>
@@ -116,4 +137,8 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+export default function LoginPage() {
+  return <LoginContent />;
 }

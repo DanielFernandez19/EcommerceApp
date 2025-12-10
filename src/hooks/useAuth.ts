@@ -1,87 +1,93 @@
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { apiPost } from "@/lib/api";
-import { LoginRequest, LoginResponse } from "@/types/auth";
+// hooks/useAuth.ts
+import { useState, useEffect, useCallback } from "react";
+import { apiClient } from "@/lib/api";
+import type { LoginRequest, LoginResponse, AuthUser } from "@/types/auth";
 
 interface UseAuthReturn {
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  loading: boolean;
-  error: string | null;
-  clearError: () => void;
+  user: AuthUser | null;
+  isLoading: boolean;
   isAuthenticated: boolean;
-  user: LoginResponse | null;
+  login: (credentials: LoginRequest) => Promise<void>;
+  logout: () => void;
+  refreshToken: () => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<LoginResponse | null>(null);
-  const router = useRouter();
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Limpiar errores
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  // Manejar errores de forma consistente
-  const handleError = useCallback((err: unknown) => {
-    let errorMessage = "Error desconocido";
-    
-    if (err && typeof err === 'object') {
-      if ('message' in err && typeof err.message === 'string') {
-        errorMessage = err.message;
-      } else if ('body' in err && err.body && typeof err.body === 'object' && 'message' in err.body) {
-        errorMessage = String(err.body.message);
+  // Verificar si hay sesión activa al montar
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const authData = localStorage.getItem("auth");
+        if (authData) {
+          const parsedUser = JSON.parse(authData);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error("Error parsing auth data:", error);
+        localStorage.removeItem("auth");
+      } finally {
+        setIsLoading(false);
       }
-    } else if (typeof err === 'string') {
-      errorMessage = err;
-    }
-    
-    setError(errorMessage);
-    throw err;
+    };
+
+    checkAuth();
   }, []);
 
   // Login
-  const login = useCallback(async (email: string, password: string) => {
-    setLoading(true);
-    clearError();
-
+  const login = useCallback(async (credentials: LoginRequest) => {
+    setIsLoading(true);
     try {
-      const loginData: LoginRequest = { email, password };
-      const response = await apiPost<LoginResponse, LoginRequest>("auth/login", loginData);
-      
-      // Guardar token en cookies (para que el middleware pueda leerlo)
-      document.cookie = `auth_token=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; secure; samesite=strict`;
-      
-      setUser(response);
-      setError(null);
-    } catch (err) {
-      handleError(err);
+      const response = await apiClient.post<LoginResponse, LoginRequest>(
+        "Auth/Login",
+        credentials
+      );
+
+      const authUser: AuthUser = {
+        id: response.id,
+        email: response.email,
+        token: response.token,
+      };
+
+      // Guardar en localStorage (temporal)
+      localStorage.setItem("auth", JSON.stringify(authUser));
+      setUser(authUser);
+    } catch (error) {
+      // Propagar error para que el componente lo maneje
+      throw error;
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [clearError, handleError]);
+  }, []);
 
   // Logout
   const logout = useCallback(() => {
-    // Eliminar token de cookies
-    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    localStorage.removeItem("auth");
     setUser(null);
-    setError(null);
-    router.push('/Login');
-  }, [router]);
+  }, []);
 
-  // Verificar si está autenticado
-  const isAuthenticated = !!user;
+  // Refresh token (si el backend lo soporta)
+  const refreshToken = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      // Implementar refresh token si el backend lo soporta
+      // const response = await apiClient.post<{ token: string }>("Auth/Refresh", {});
+      // setUser(prev => prev ? { ...prev, token: response.token } : null);
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      logout();
+    }
+  }, [user, logout]);
 
   return {
+    user,
+    isLoading,
+    isAuthenticated: !!user,
     login,
     logout,
-    loading,
-    error,
-    clearError,
-    isAuthenticated,
-    user,
+    refreshToken,
   };
 }

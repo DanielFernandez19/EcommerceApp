@@ -1,3 +1,8 @@
-export { TextInput } from "../ui/TextInput";
-export { Select } from "../ui/Select";
-export { ModalSuccess } from "../ui/ModalSuccess";
+export { Button } from "./Button";
+export { Input } from "./Input";
+export { Modal } from "./Modal";
+export { ModalSuccess } from "./ModalSuccess";
+export { default as Row } from "./Row";
+export { Select } from "./Select";
+export { default as Table } from "./Table";
+export { TextInput } from "./TextInput";
