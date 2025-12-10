@@ -66,12 +66,16 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
 
             setUser(userData);
           } else {
-
+            // Token inválido o expirado - limpiar y redirigir
+            setUser(null);
+            router.push("/Login");
           }
         }
-      } catch (error) {
-        console.error('Error en inicialización:', error);
-      } finally {
+        } catch (error) {
+          console.error('Error en inicialización:', error);
+          // Error al leer cookies - limpiar estado
+          setUser(null);
+        } finally {
         setInitializing(false);
       }
     };
@@ -82,7 +86,7 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
   // Logout
   const logout = () => {
     setUser(null);
-    router.push("/");
+    router.push("/Login");
   };
 
   // Verificar si está autenticado

@@ -1,6 +1,6 @@
 "use server";
 
-import { serverApiClient } from "@/lib/server-api";
+import { apiClient } from "@/lib/api";
 import type { User } from "@/types/user";
 
 // Tipo para datos de actualización
@@ -24,7 +24,7 @@ export async function getUserById(userId: string): Promise<User | null> {
     console.log("Fetching user with ID:", userId);
     
     // Obtener datos del usuario usando el server API client
-    const user = await serverApiClient.get<User>(`user/GetUserById/${userId}`);
+    const user = await apiClient.get<User>(`user/GetUserById/${userId}`);
     
     console.log("User fetched:", user);
     return user;
@@ -60,7 +60,7 @@ export async function updateUser(userId: string, userData: UpdateUserData): Prom
     console.log("Enviando actualización de usuario:", userUpdate);
 
     // Actualizar usuario usando el server API client
-    const response = await serverApiClient.post<boolean, User>(`user/UpdateUser`, userUpdate);
+    const response = await apiClient.post<boolean, User>(`user/UpdateUser`, userUpdate);
 
     return response;
   } catch (error) {

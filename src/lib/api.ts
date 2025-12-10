@@ -24,14 +24,25 @@ class ApiClient {
       "Content-Type": "application/json",
     };
 
-    // Obtener token de las cookies
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; auth_token=`);
-    if (parts.length === 2) {
-      const token = parts.pop()?.split(';').shift();
-      if (token) {
-        defaultHeaders["Authorization"] = `Bearer ${token}`;
+    // Obtener token de las cookies (client o server)
+    let token: string | undefined;
+    
+    // Try server-side first (Server Components/Actions)
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      token = cookieStore.get("auth_token")?.value;
+    } catch {
+      // Fallback to client-side (Client Components)
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; auth_token=`);
+      if (parts.length === 2) {
+        token = parts.pop()?.split(';').shift();
       }
+    }
+    
+    if (token) {
+      defaultHeaders["Authorization"] = `Bearer ${token}`;
     }
 
     const config: RequestInit = {

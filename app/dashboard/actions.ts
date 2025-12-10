@@ -1,6 +1,6 @@
 "use server";
 
-import { serverApiClient } from "@/lib/server-api";
+import { apiClient } from "@/lib/api";
 import type { DashboardData } from "@/types/dashboard";
 
 // Server Action para obtener datos del dashboard
