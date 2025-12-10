@@ -12,11 +12,12 @@ interface UseLocationDataReturn {
   error: string | null;
   resetProvinces: () => void;
   resetCities: () => void;
+  preloadLocation: (countryId?: number, provinceId?: number, cityId?: number) => Promise<void>;
 }
 
 export function useLocationData(
-  selectedCountryId: number,
-  selectedProvinceId: number,
+  initialCountryId: number,
+  initialProvinceId: number,
 ): UseLocationDataReturn {
   const [countries, setCountries] = useState<Country[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -55,7 +56,7 @@ export function useLocationData(
 
   // Load provinces when country changes
   useEffect(() => {
-    if (!selectedCountryId) {
+    if (!initialCountryId) {
       setProvinces([]);
       setCities([]);
       return;
@@ -65,7 +66,7 @@ export function useLocationData(
 
     async function loadProvinces() {
       setLoadingProvinces(true);
-      const endpoint = `province/GetAllByCountry/${selectedCountryId}`;
+      const endpoint = `province/GetAllByCountry/${initialCountryId}`;
       
       try {
         const data = await apiGet<Province[]>(endpoint);
@@ -109,11 +110,11 @@ export function useLocationData(
     return () => {
       mounted = false;
     };
-  }, [selectedCountryId]);
+  }, [initialCountryId]);
 
   // Load cities when province changes
   useEffect(() => {
-    if (!selectedProvinceId) {
+    if (!initialProvinceId) {
       setCities([]);
       return;
     }
@@ -124,7 +125,7 @@ export function useLocationData(
       setLoadingCities(true);
       try {
         const data = await apiGet<City[]>(
-          `City/GetAllByProvince/${selectedProvinceId}`,
+          `City/GetAllByProvince/${initialProvinceId}`,
         );
         if (!mounted) return;
 
@@ -161,7 +162,7 @@ export function useLocationData(
     return () => {
       mounted = false;
     };
-  }, [selectedProvinceId]);
+  }, [initialProvinceId]);
 
   const resetProvinces = () => {
     setProvinces([]);
@@ -169,6 +170,62 @@ export function useLocationData(
 
   const resetCities = () => {
     setCities([]);
+  };
+
+  // Función para precargar datos de ubicación en secuencia
+  const preloadLocation = async (
+    countryId?: number, 
+    provinceId?: number, 
+    cityId?: number
+  ): Promise<void> => {
+    console.log("preloadLocation iniciado:", { countryId, provinceId, cityId });
+    
+    try {
+      // Paso 1: Esperar a que carguen los países
+      if (countries.length === 0) {
+        console.log("Esperando carga de países...");
+        // Esperar un máximo de 5 segundos a que carguen los países
+        let attempts = 0;
+        while (countries.length === 0 && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+      }
+
+      // Paso 2: Si hay país, esperar a que se carguen sus provincias
+      if (countryId && countries.length > 0) {
+        console.log("Esperando provincias del país:", countryId);
+        
+        // Simular el cambio de país para que el hook cargue las provincias
+        // Esto se hace actualizando el estado del componente padre
+        // Por ahora, esperamos a que el hook detecte el cambio
+        
+        // Esperar a que carguen las provincias
+        let attempts = 0;
+        while (provinces.length === 0 && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        console.log("Provincias cargadas:", provinces.length);
+      }
+
+      // Paso 3: Si hay provincia, esperar a que se carguen sus ciudades
+      if (provinceId && provinces.length > 0) {
+        console.log("Esperando ciudades de la provincia:", provinceId);
+        
+        // Esperar a que carguen las ciudades
+        let attempts = 0;
+        while (cities.length === 0 && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        console.log("Ciudades cargadas:", cities.length);
+      }
+
+      console.log("preloadLocation completado");
+    } catch (error) {
+      console.error("Error en preloadLocation:", error);
+    }
   };
 
   return {
@@ -181,6 +238,7 @@ export function useLocationData(
     error,
     resetProvinces,
     resetCities,
+    preloadLocation,
   };
 }
 

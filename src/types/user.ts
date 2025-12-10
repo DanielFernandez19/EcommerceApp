@@ -27,4 +27,17 @@ export interface User {
     id: number;
     name: string;
   };
+  // Soporte para formato Dto (viene del backend)
+  countryDto?: {
+    id: number;
+    name: string;
+  };
+  provinceDto?: {
+    id: number;
+    name: string;
+  };
+  cityDto?: {
+    id: number;
+    name: string;
+  };
 }
