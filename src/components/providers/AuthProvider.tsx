@@ -13,6 +13,7 @@ interface AuthContextType {
   initializing: boolean;
   setUser: (user: LoginResponse | null) => void;
   logout: () => void;
+  refreshAuth: () => void;
 }
 
 const AuthenticationContext = createContext<AuthContextType | undefined>(
@@ -85,8 +86,34 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
 
   // Logout
   const logout = () => {
+    // Limpiar cookies de autenticación
+    document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'auth_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    
+    // Limpiar estado
     setUser(null);
+    
+    // Redirigir al login
     router.push("/Login");
+  };
+
+  // Refresh auth - forzar re-lectura de cookies
+  const refreshAuth = () => {
+    const token = getAuthToken();
+    
+    if (token) {
+      // Intentar obtener datos del usuario de las cookies
+      const userData = getAuthUser();
+      if (userData) {
+        setUser(userData);
+      } else {
+        // Token inválido o expirado - limpiar y redirigir
+        setUser(null);
+        router.push("/Login");
+      }
+    } else {
+      setUser(null);
+    }
   };
 
   // Verificar si está autenticado
@@ -102,6 +129,7 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
     initializing,
     setUser,
     logout,
+    refreshAuth,
   };
 
   return (

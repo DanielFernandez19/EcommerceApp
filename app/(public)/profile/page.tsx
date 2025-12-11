@@ -7,8 +7,8 @@ export default function ProfilePage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    // Redirigir al dashboard después de actualizar
-    router.push("/dashboard");
+    // NO redirigir - quedarse en la página de perfil
+    // El ProfileEditor mostrará el modal de éxito
   };
 
   const handleCancel = () => {
@@ -16,10 +16,5 @@ export default function ProfilePage() {
     router.push("/dashboard");
   };
 
-  return (
-    <ProfileEditor
-      onSuccess={handleSuccess}
-      onCancel={handleCancel}
-    />
-  );
+  return <ProfileEditor onSuccess={handleSuccess} onCancel={handleCancel} />;
 }

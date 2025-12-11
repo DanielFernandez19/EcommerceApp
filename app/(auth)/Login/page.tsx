@@ -120,7 +120,7 @@ function LoginContent() {
         <div className="mt-6 text-center space-y-2">
           <p className="text-gray-400 text-sm">
             ¿No tienes cuenta?{" "}
-            <Link href="/register" className="text-violet-400 hover:text-violet-300 transition-colors">
+            <Link href="/Register" className="text-violet-400 hover:text-violet-300 transition-colors">
               Regístrate aquí
             </Link>
           </p>

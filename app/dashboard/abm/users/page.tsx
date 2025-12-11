@@ -32,7 +32,10 @@ export default function UsersPage() {
         </div>
         
         <div className="mt-4 sm:mt-0">
-          <button className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors">
+          <button 
+            onClick={() => router.push("/dashboard/abm/users/new")}
+            className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+          >
             Nuevo usuario
           </button>
         </div>

@@ -23,7 +23,7 @@ interface DashboardCard {
   icon: React.ReactNode;
   href: string;
   color: string;
-  stats: {
+  stats?: {
     label: string;
     value: string;
     trend?: "up" | "down" | "neutral";
@@ -47,16 +47,12 @@ export function DashboardCards({ data }: DashboardCardsProps) {
       icon: <FiUsers className="w-8 h-8" />,
       href: "/dashboard/abm/users",
       color: "bg-blue-500",
-      stats: {
-        label: "Total usuarios",
-        value: data.stats.users.total.toLocaleString(),
-        trend: data.stats.users.trend,
-      },
+
       actions: [
         {
           label: "Nuevo usuario",
           icon: <FiPlus />,
-          onClick: () => router.push("/dashboard/abm/users/new"),
+          onClick: () => router.push("/Register?mode=admin"),
           color: "bg-blue-600 hover:bg-blue-700",
         },
         {
@@ -169,37 +165,38 @@ export function DashboardCards({ data }: DashboardCardsProps) {
             </div>
           </div>
 
-          {/* Card Body */}
           <div className="p-6">
-            {/* Stats */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">
-                  {card.stats.label}
-                </span>
-                {card.stats.trend && (
-                  <span
-                    className={`
-                    inline-flex items-center text-xs font-medium
-                    ${
-                      card.stats.trend === "up"
-                        ? "text-green-400"
-                        : card.stats.trend === "down"
-                          ? "text-red-400"
-                          : "text-gray-400"
-                    }
-                  `}
-                  >
-                    {card.stats.trend === "up" && "↑"}
-                    {card.stats.trend === "down" && "↓"}
-                    {card.stats.trend === "neutral" && "→"}
+            {/* Stats - solo si existen */}
+            {card.stats && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-400">
+                    {card.stats.label}
                   </span>
-                )}
+                  {card.stats.trend && (
+                    <span
+                      className={`
+                      inline-flex items-center text-xs font-medium
+                      ${
+                        card.stats.trend === "up"
+                          ? "text-green-400"
+                          : card.stats.trend === "down"
+                            ? "text-red-400"
+                            : "text-gray-400"
+                      }
+                    `}
+                    >
+                      {card.stats.trend === "up" && "↑"}
+                      {card.stats.trend === "down" && "↓"}
+                      {card.stats.trend === "neutral" && "→"}
+                    </span>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-white">
+                  {card.stats.value}
+                </div>
               </div>
-              <div className="text-2xl font-bold text-white">
-                {card.stats.value}
-              </div>
-            </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-col space-y-2">

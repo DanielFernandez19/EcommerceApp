@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { TextInput, Select, ModalSuccess } from "@/components/ui";
 import { apiPost } from "@/lib/api";
 import type { RegisterRequest, RegisterResponse } from "@/types";
@@ -12,6 +12,8 @@ import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isAdminMode = searchParams.get("mode") === "admin";
 
   const [form, setForm] = useState<RegisterRequest>({
     name: "",
@@ -131,7 +133,14 @@ export default function RegisterPage() {
         setShowSuccess(true);
 
         setTimeout(() => {
-          router.push("/Login");
+          // Redirigir según el rol del usuario creado
+          if (res.role.id === 1 || res.role.id === 2) {
+            // Admin o Vendor → Dashboard
+            router.push("/dashboard");
+          } else {
+            // User normal → Login para que inicie sesión
+            router.push("/Login");
+          }
         }, 3000);
       }
     } catch (err: unknown) {
@@ -182,9 +191,14 @@ export default function RegisterPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Crear cuenta</h1>
+<h1 className="text-3xl font-bold text-white mb-2">
+            {isAdminMode ? "Crear usuario" : "Crear cuenta"}
+          </h1>
           <p className="text-gray-400">
-            Completa el formulario para registrarte
+            {isAdminMode 
+              ? "Completa el formulario para crear un nuevo usuario"
+              : "Completa el formulario para registrarte"
+            }
           </p>
         </div>
 
@@ -194,7 +208,11 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {showSuccess && <ModalSuccess message="Usuario creado exitosamente" />}
+        {showSuccess && (
+          <ModalSuccess 
+            message={isAdminMode ? "Usuario creado exitosamente" : "Cuenta creada exitosamente"} 
+          />
+        )}
 
         <div className="bg-gray-800 rounded-xl border border-gray-700 p-8">
           <form onSubmit={handleRegister} className="grid grid-cols-1 gap-6">
@@ -339,28 +357,30 @@ export default function RegisterPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Creando cuenta...
+                    isAdminMode ? "Creando usuario..." : "Creando cuenta..."
                   </span>
                 ) : (
-                  "Crear cuenta"
+isAdminMode ? "Crear usuario" : "Crear cuenta"
                 )}
               </button>
             </div>
           </form>
         </div>
 
-        {/* Login link */}
-        <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            ¿Ya tienes cuenta?{" "}
-            <Link
-              href="/Login"
-              className="text-violet-400 hover:text-violet-300 transition-colors"
-            >
-              Inicia sesión aquí
-            </Link>
-          </p>
-        </div>
+{/* Login link - solo mostrar en modo normal */}
+        {!isAdminMode && (
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              ¿Ya tienes cuenta?{" "}
+              <Link
+                href="/Login"
+                className="text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                Inicia sesión aquí
+              </Link>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

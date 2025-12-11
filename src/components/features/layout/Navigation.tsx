@@ -65,13 +65,13 @@ export default function Navigation() {
               // Usuario no logueado - mostrar botones de login/register
               <>
                 <Link
-                  href="/login"
+                  href="/Login"
                   className="text-violet-300 hover:text-white px-4 py-2 rounded-lg hover:bg-violet-600/20 transition-all duration-200 font-medium"
                 >
                   Iniciar Sesión
                 </Link>
                 <Link
-                  href="/register"
+                  href="/Register"
                   className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all duration-200 font-medium shadow-lg hover:shadow-violet-500/25"
                 >
                   Crear Cuenta

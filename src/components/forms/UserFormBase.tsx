@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { LocationSelects } from "@/components/forms/LocationSelects";
 import type { User } from "@/types/user";
+import type { UpdateUserData } from "@/actions/userActions";
 
 interface UserFormBaseProps {
   user: User;
   loading?: boolean;
-  onSubmit: (userData: any) => Promise<void>;
+  onSubmit: (userData: User | UpdateUserData) => Promise<void>;
   onCancel: () => void;
   submitText?: string;
   cancelText?: string;
@@ -36,8 +37,6 @@ export function UserFormBase({
   roleOptions = [],
   children,
 }: UserFormBaseProps) {
-  const router = useRouter();
-  
   // Extraer IDs de los objetos anidados
   const userCountryId = user.countryDto?.id || user.idCountry || 0;
   const userProvinceId = user.provinceDto?.id || user.idProvince || 0;
@@ -53,65 +52,44 @@ export function UserFormBase({
     postalCode: user.postalCode || "",
   });
 
-  const [selectedCountryId, setSelectedCountryId] = useState<number>(0);
-  const [selectedProvinceId, setSelectedProvinceId] = useState<number>(0);
-  const [selectedCityId, setSelectedCityId] = useState<number>(0);
-  const [selectedRole, setSelectedRole] = useState<{ id: number; name: string } | null>(initialRole || null);
-  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
-
-  // Efecto para precargar datos de ubicación (solo una vez)
-  useEffect(() => {
-    if (!initialDataLoaded) {
-      if (userCountryId || userProvinceId || userCityId) {
-        setSelectedCountryId(userCountryId);
-        setSelectedProvinceId(userProvinceId);
-        setSelectedCityId(userCityId);
-      }
-      setInitialDataLoaded(true);
-    }
-  }, []); // 🎯 Solo se ejecuta una vez al montar
+  // Inicializar estados directamente con los datos del usuario para evitar effects
+  const [selectedCountryId, setSelectedCountryId] =
+    useState<number>(userCountryId);
+  const [selectedProvinceId, setSelectedProvinceId] =
+    useState<number>(userProvinceId);
+  const [selectedCityId, setSelectedCityId] = useState<number>(userCityId);
+  const [selectedRole, setSelectedRole] = useState<{
+    id: number;
+    name: string;
+  } | null>(initialRole || null);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const userData = {
       name: formData.name,
       lastName: formData.lastName,
       email: formData.email,
       phoneNumber: formData.phoneNumber,
       billingAddress: formData.billingAddress,
+      billingAddress2: user.billingAddress2 || "", // Incluir campo faltante
       postalCode: formData.postalCode,
       idCountry: selectedCountryId,
       idProvince: selectedProvinceId,
       idCity: selectedCityId,
       idRole: selectedRole?.id || user.idRole,
-      role: selectedRole || user.role,
+      // NO enviar el objeto 'role' completo, solo el idRole
     };
 
     await onSubmit(userData);
   };
-
-  // Mostrar loading mientras se precargan los datos de ubicación
-  const needsLocationPreload = userCountryId || userProvinceId || userCityId;
-  const isPreloading = needsLocationPreload && !initialDataLoaded;
-  
-  if (isPreloading) {
-    return (
-      <div className="p-8 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Precargando ubicación...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="p-8 space-y-8">
@@ -136,14 +114,14 @@ export function UserFormBase({
             onChange={(value) => handleInputChange("name", value)}
             required
           />
-          
+
           <Input
             name="lastName"
             label="Apellido"
             value={formData.lastName}
             onChange={(value) => handleInputChange("lastName", value)}
           />
-          
+
           <Input
             name="email"
             label="Email"
@@ -152,7 +130,7 @@ export function UserFormBase({
             onChange={(value) => handleInputChange("email", value)}
             required
           />
-          
+
           <Input
             name="phoneNumber"
             label="Teléfono"
@@ -175,7 +153,7 @@ export function UserFormBase({
             value={formData.billingAddress}
             onChange={(value) => handleInputChange("billingAddress", value)}
           />
-          
+
           <LocationSelects
             initialCountryId={selectedCountryId}
             initialProvinceId={selectedProvinceId}
@@ -185,7 +163,7 @@ export function UserFormBase({
             onCityChange={setSelectedCityId}
             disabled={loading}
           />
-          
+
           <Input
             name="postalCode"
             label="Código Postal"
@@ -216,9 +194,15 @@ export function UserFormBase({
               disabled={loading}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all disabled:opacity-50"
             >
-              <option value="" className="bg-gray-700">Seleccione...</option>
+              <option value="" className="bg-gray-700">
+                Seleccione...
+              </option>
               {roleOptions.map((role) => (
-                <option key={String(role.id)} value={role.id} className="bg-gray-700">
+                <option
+                  key={String(role.id)}
+                  value={role.id}
+                  className="bg-gray-700"
+                >
                   {role.name}
                 </option>
               ))}
@@ -240,7 +224,7 @@ export function UserFormBase({
         >
           {cancelText}
         </Button>
-        
+
         <Button
           type="submit"
           loading={loading}

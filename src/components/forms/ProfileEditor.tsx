@@ -3,10 +3,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { apiClient } from "@/lib/api";
+import { updateUser, type UpdateUserData } from "@/actions/userActions";
 import { useAuthContext } from "@/components/providers/AuthProvider";
 import { UserFormBase } from "./UserFormBase";
+import { ModalSuccess } from "@/components/ui/ModalSuccess";
 import type { User } from "@/types/user";
+import { apiClient } from "@/lib/api";
 
 interface ProfileEditorProps {
   userId?: string; // Si no se proporciona, es para el perfil del usuario actual
@@ -26,6 +28,7 @@ export function ProfileEditor({
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Cargar datos del usuario
   const loadUser = async () => {
@@ -81,61 +84,43 @@ export function ProfileEditor({
     const targetUserId = userId || currentUser?.id;
 
     if (targetUserId && !user) {
-      console.log("🔄 useEffect - Cargando usuario:", targetUserId);
       loadUser();
     } else if (!targetUserId) {
-      console.log("🔄 useEffect - No hay userId, seteando fetchLoading false");
       setFetchLoading(false);
-    } else {
-      console.log("🔄 useEffect - Usuario ya cargado, no hacer nada");
     }
   }, [userId, currentUser?.id]); // Solo se ejecuta si cambia el userId
 
-  const handleSubmit = async (userData: User) => {
+  const handleSubmit = async (userData: User | unknown) => {
     setLoading(true);
 
     try {
-      const userUpdate: User = {
-        id: user!.id,
-        name: userData.name,
-        lastName: userData.lastName,
-        email: userData.email,
-        phoneNumber: userData.phoneNumber,
-        billingAddress: userData.billingAddress,
-        billingAddress2: userData.billingAddress2 || "",
-        postalCode: userData.postalCode,
-        idCountry: userData.idCountry,
-        idProvince: userData.idProvince,
-        idCity: userData.idCity,
-        idRole: user!.idRole, // No se puede cambiar el rol propio
-        role: user!.role,
-        // Incluir Dto para compatibilidad
-        countryDto: userData.idCountry
-          ? { id: userData.idCountry, name: "" }
-          : undefined,
-        provinceDto: userData.idProvince
-          ? { id: userData.idProvince, name: "" }
-          : undefined,
-        cityDto: userData.idCity
-          ? { id: userData.idCity, name: "" }
-          : undefined,
-      };
+      // Type guard para verificar que userData es compatible con UpdateUserData
+      if (typeof userData === 'object' && userData !== null && 'name' in userData) {
+        const success = await updateUser(user!.id, userData as UpdateUserData);
 
-      const response = await apiClient.post<boolean, User>(
-        `user/UpdateUser`,
-        userUpdate,
-      );
+        if (success) {
+          onSuccess?.();
 
-      if (response) {
-        onSuccess?.();
-        if (!userId) {
-          router.push("/dashboard");
+          // Mostrar modal de éxito y quedarse en la página
+          setShowSuccess(true);
+
+          // Ocultar el modal después de 3 segundos
+          setTimeout(() => {
+            setShowSuccess(false);
+          }, 3000);
+
+          // Solo redirigir si estamos en modo edición (hay userId)
+          // Si es perfil propio (no hay userId), NO redirigir
+          if (userId) {
+            router.push("/dashboard");
+          }
+        } else {
+          throw new Error("No se pudo actualizar el usuario");
         }
       } else {
-        throw new Error("No se pudo actualizar el usuario");
+        throw new Error("Datos de usuario inválidos");
       }
     } catch (error) {
-      console.error("Error updating user:", error);
       alert("Error al actualizar el usuario. Por favor, intenta nuevamente.");
     } finally {
       setLoading(false);
@@ -162,8 +147,15 @@ export function ProfileEditor({
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-900 py-8 ">
+      <div className="max-w-4xl mx-auto mt-6 px-4">
+        {/* Modal de éxito arriba */}
+        {showSuccess && (
+          <div className="mb-6">
+            <ModalSuccess message="¡Perfil actualizado exitosamente!" />
+          </div>
+        )}
+        
         <div className="bg-gray-800 rounded-xl border border-gray-700">
           <UserFormBase
             user={user}
@@ -187,7 +179,7 @@ export function ProfileEditor({
                 <span className="text-gray-300">
                   Rol actual:{" "}
                   <span className="text-violet-400 font-medium">
-                    {user.role?.name || "Usuario"}
+                    {user.role?.name || "User"}
                   </span>
                 </span>
               </div>

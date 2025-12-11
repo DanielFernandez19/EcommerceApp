@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateUser } from "@/actions/userActions";
+import { updateUser, type UpdateUserData } from "@/actions/userActions";
 import { UserFormBase } from "./UserFormBase";
 import type { User } from "@/types/user";
 
@@ -14,12 +14,12 @@ export function EditUserForm({ user }: EditUserFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (userData: any) => {
+  const handleSubmit = async (userData: UpdateUserData) => {
     setLoading(true);
 
     try {
       await updateUser(user.id, userData);
-      
+
       // Redirigir a la lista de usuarios
       router.push("/dashboard/abm/users");
     } catch (error) {
@@ -34,11 +34,11 @@ export function EditUserForm({ user }: EditUserFormProps) {
     router.push("/dashboard/abm/users");
   };
 
-  // Opciones de rol para admin
+  // Opciones de rol actualizadas: 1=admin, 2=vendor, 3=user
   const roleOptions = [
     { id: 1, name: "Admin" },
-    { id: 2, name: "Super Admin" },
-    { id: 3, name: "Usuario" },
+    { id: 2, name: "Vendor" },
+    { id: 3, name: "User" },
   ];
 
   return (

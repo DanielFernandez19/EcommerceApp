@@ -1,5 +1,4 @@
 import { DashboardCards } from "@/components/dashboard/DashboardCards";
-import { QuickActions } from "@/components/dashboard/QuickActions";
 import { getDashboardData } from "./actions";
 
 export default async function DashboardPage() {
@@ -27,11 +26,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid - Server Component */}
+{/* Stats Grid - Server Component */}
       <DashboardCards data={dashboardData} />
-
-      {/* Quick Actions - Server Component */}
-      <QuickActions />
     </div>
   );
 }

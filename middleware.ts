@@ -6,17 +6,30 @@ export function middleware(request: NextRequest) {
 
 // Si está tratando de acceder al dashboard o sus rutas hijas
   if (pathname.startsWith('/dashboard')) {
-    // Verificar si hay un token en las cookies
+    // Verificar si hay un token en las cookies (forzar lectura fresca)
     const token = request.cookies.get('auth_token')?.value;
+    const userCookie = request.cookies.get('auth_user')?.value;
 
-    // Si no hay token, redirigir al login
-    if (!token) {
-      const loginUrl = new URL('/login', request.url);
+    // Si no hay token o usuario, redirigir al login
+    if (!token || !userCookie) {
+      console.log('Middleware: No token o user cookie found', { token: !!token, userCookie: !!userCookie });
+      const loginUrl = new URL('/Login', request.url);
       return NextResponse.redirect(loginUrl);
     }
 
-    // NOTA: El middleware no puede validar el rol sin hacer una petición al backend
-    // La validación de rol se hará en el layout del dashboard
+    // Validar que el usuario tenga rol de admin (1 o 2)
+    try {
+      const userData = JSON.parse(decodeURIComponent(userCookie));
+      if (![1, 2].includes(userData.idRole)) {
+        console.log('Middleware: User does not have admin role', userData.idRole);
+        const loginUrl = new URL('/Login', request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+    } catch (error) {
+      console.log('Middleware: Error parsing user cookie', error);
+      const loginUrl = new URL('/Login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
 // Comentado: Permitir acceso a login/register aunque esté logueado
@@ -32,9 +45,17 @@ export function middleware(request: NextRequest) {
   }
   */
 
-  return NextResponse.next();
+  // Forzar revalidación de cookies y prevenir cache
+  const response = NextResponse.next();
+  
+  // Agregar headers para prevenir cache del navegador
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  
+  return response;
 }
 
-export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/register']
-};
+  export const config = {
+    matcher: ['/dashboard/:path*', '/Login', '/Register']
+  };

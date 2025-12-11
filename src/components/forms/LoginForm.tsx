@@ -13,7 +13,7 @@ import { apiClient } from "@/lib/api";
 
 export function LoginForm() {
   const router = useRouter();
-  const { setUser } = useAuthContext();
+  const { setUser, refreshAuth } = useAuthContext();
 
   const form = useForm<LoginFormData>({
     initialValues: {
@@ -42,8 +42,20 @@ export function LoginForm() {
         // Actualizar el contexto
         setUser(userData);
         
-        // Redirigir al dashboard
-        router.push("/dashboard");
+        // Forzar refresh del contexto para asegurar sincronización
+        refreshAuth();
+        
+        // Pequeña demora para asegurar que el contexto se actualice antes de la navegación
+        setTimeout(() => {
+          // Redirigir según el rol
+          if (userData.idRole === 1 || userData.idRole === 2) {
+            // Admin o Vendor → Dashboard
+            router.push("/dashboard");
+          } else {
+            // User normal → Perfil o Landing
+            router.push("/profile");
+          }
+        }, 100);
       } catch (error) {
         console.error("Login failed:", error);
         throw error; // Dejar que el useForm maneje el error
@@ -94,7 +106,7 @@ export function LoginForm() {
         <p className="text-sm text-gray-600">
           ¿No tienes cuenta?{" "}
           <Link 
-            href="/register" 
+            href="/Register" 
             className="text-blue-600 hover:underline font-medium"
           >
             Regístrate aquí

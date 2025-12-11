@@ -1,6 +1,7 @@
 import { EditUserForm } from "@/components/forms/EditUserForm";
 import { getUserById } from "@/actions/userActions";
 import { notFound } from "next/navigation";
+import type { User } from "@/types/user";
 
 interface EditUserPageProps {
   params: Promise<{
@@ -11,35 +12,22 @@ interface EditUserPageProps {
 export default async function EditUserPage({ params }: EditUserPageProps) {
   const { id: userId } = await params;
 
+  let user: User | null = null;
+  let hasError = false;
+
   try {
     // Obtener datos del usuario en el servidor
-    const user = await getUserById(userId);
-
+    user = await getUserById(userId);
+    
     if (!user) {
       notFound();
     }
-
-    return (
-      <div className="min-h-screen bg-gray-900 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-gray-800 rounded-xl border border-gray-700">
-            {/* Header */}
-            <div className="border-b border-gray-700 px-8 py-6">
-              <h1 className="text-2xl font-bold text-white">Editar Usuario</h1>
-              <p className="text-gray-400 mt-1">
-                Modifica la información del usuario seleccionado
-              </p>
-            </div>
-
-            {/* Formulario - Client Component para la interactividad */}
-            <EditUserForm user={user} />
-          </div>
-        </div>
-      </div>
-    );
   } catch (error) {
     console.error("Error loading user:", error);
-    
+    hasError = true;
+  }
+
+  if (hasError) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -55,4 +43,15 @@ export default async function EditUserPage({ params }: EditUserPageProps) {
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen bg-gray-900 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="bg-gray-800 rounded-xl border border-gray-700">
+          {/* Formulario - Client Component para la interactividad */}
+          <EditUserForm user={user!} />
+        </div>
+      </div>
+    </div>
+  );
 }
