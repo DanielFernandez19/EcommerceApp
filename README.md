@@ -1,36 +1,191 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 MiEcommerce - Aplicación de Comercio Electrónico
 
-## Getting Started
+Una aplicación moderna de ecommerce desarrollada con Next.js, que ofrece una experiencia completa tanto para clientes como para administradores. Incluye un sistema de autenticación robusto, panel de administración y una interfaz de usuario atractiva y responsive.
 
-First, run the development server:
+## ✨ Características Principales
+
+### 🎯 Para Clientes
+- **Landing Page** atractiva con productos destacados
+- **Catálogo de productos** completo y navegable
+- **Sistema de autenticación** (Registro e Inicio de sesión)
+- **Perfil de usuario** personalizable
+- **Gestión de pedidos** y historial
+- **Páginas informativas** (Sobre Nosotros, Contacto, Ayuda)
+
+### 🔐 Sistema de Autenticación
+- Registro de nuevos usuarios con validación
+- Inicio de sesión seguro
+- Rutas protegidas con middleware
+- Gestión de sesiones con cookies
+- Control de acceso basado en roles
+
+### 👨‍💼 Panel de Administración
+- **Dashboard** con métricas y estadísticas
+- **Gestión de Usuarios** (ABM completo)
+- **Gestión de Productos** (Catálogo y edición)
+- **Control de Stock** (Inventario en tiempo real)
+- **Interfaz intuitiva** con sidebar y navegación moderna
+
+## 🚀 Tecnologías Utilizadas
+
+- **[Next.js 16](https://nextjs.org/)** - Framework de React con App Router
+- **[React 19](https://react.dev/)** - Biblioteca de UI
+- **[TypeScript](https://www.typescriptlang.org/)** - Tipado estático
+- **[Tailwind CSS 4](https://tailwindcss.com/)** - Framework de estilos utility-first
+- **[Zod](https://zod.dev/)** - Validación de esquemas TypeScript-first
+- **[React Icons](https://react-icons.github.io/react-icons/)** - Iconos populares
+
+## 📋 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- **Node.js** 18.17 o superior
+- **pnpm** (recomendado) o npm/yarn/bun
+
+## 🛠️ Instalación
+
+1. **Clona el repositorio**
+   ```bash
+   git clone <url-del-repositorio>
+   cd ecommerce-app
+   ```
+
+2. **Instala las dependencias**
+   ```bash
+   pnpm install
+   # o
+   npm install
+   # o
+   yarn install
+   ```
+
+3. **Configura las variables de entorno** (si es necesario)
+   ```bash
+   # Crea un archivo .env.local con tus configuraciones
+   ```
+
+4. **Inicia el servidor de desarrollo**
+   ```bash
+   pnpm dev
+   # o
+   npm run dev
+   # o
+   yarn dev
+   ```
+
+5. **Abre tu navegador**
+   ```
+   http://localhost:3000
+   ```
+
+## 📜 Scripts Disponibles
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Desarrollo
+pnpm dev          # Inicia el servidor de desarrollo en http://localhost:3000
+
+# Producción
+pnpm build        # Construye la aplicación para producción
+pnpm start        # Inicia el servidor de producción
+
+# Calidad de código
+pnpm lint         # Ejecuta ESLint para verificar el código
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📁 Estructura del Proyecto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+ecommerce-app/
+├── app/                      # App Router de Next.js
+│   ├── (auth)/              # Rutas de autenticación
+│   │   ├── Login/
+│   │   └── Register/
+│   ├── (public)/            # Rutas públicas
+│   │   ├── about/
+│   │   ├── contact/
+│   │   ├── help/
+│   │   ├── orders/
+│   │   ├── profile/
+│   │   └── Landing.tsx
+│   ├── dashboard/           # Panel de administración
+│   │   ├── abm/            # ABM (Alta, Baja, Modificación)
+│   │   │   ├── products/
+│   │   │   ├── stock/
+│   │   │   └── users/
+│   │   └── layout.tsx
+│   └── layout.tsx
+├── src/
+│   ├── actions/            # Server actions
+│   ├── components/         # Componentes React
+│   │   ├── auth/          # Componentes de autenticación
+│   │   ├── dashboard/     # Componentes del dashboard
+│   │   ├── features/      # Componentes de características
+│   │   ├── forms/         # Formularios
+│   │   ├── providers/     # Context providers
+│   │   ├── table/         # Componentes de tablas
+│   │   └── ui/            # Componentes UI reutilizables
+│   ├── data/              # Datos estáticos
+│   ├── hooks/             # Custom hooks
+│   ├── lib/               # Utilidades y configuraciones
+│   ├── schemas/           # Esquemas de validación (Zod)
+│   ├── types/             # Definiciones de tipos TypeScript
+│   └── utils/             # Funciones utilitarias
+├── public/                # Archivos estáticos
+├── middleware.ts          # Middleware de Next.js
+└── package.json
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 Funcionalidades Detalladas
 
-## Learn More
+### Autenticación y Autorización
+- Validación de formularios con Zod
+- Middleware para protección de rutas
+- Control de acceso basado en roles (Admin/Usuario)
+- Gestión de sesiones con cookies seguras
 
-To learn more about Next.js, take a look at the following resources:
+### Panel de Administración
+- **Dashboard Principal**: Vista general con métricas y estadísticas
+- **Gestión de Usuarios**: Crear, editar, eliminar y listar usuarios
+- **Gestión de Productos**: Administrar catálogo completo
+- **Control de Stock**: Monitoreo y actualización de inventario
+- **Navegación Intuitiva**: Sidebar responsive y breadcrumbs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Interfaz de Usuario
+- Diseño moderno y responsive
+- Tema oscuro por defecto
+- Componentes reutilizables
+- Formularios con validación en tiempo real
+- Modales y notificaciones
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 Diseño
 
-## Deploy on Vercel
+La aplicación utiliza un diseño moderno con:
+- **Tema oscuro** como predeterminado
+- **Colores principales**: Violeta (#7c3aed) y grises
+- **Tipografía**: Geist Sans y Geist Mono
+- **Responsive**: Optimizado para móviles, tablets y desktop
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔒 Seguridad
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Rutas protegidas con middleware
+- Validación de datos en cliente y servidor
+- Manejo seguro de tokens de autenticación
+- Control de acceso basado en roles
+
+## 🚧 Próximas Mejoras
+
+- [ ] Integración con pasarela de pagos
+- [ ] Sistema de carrito de compras
+- [ ] Búsqueda y filtros avanzados
+- [ ] Sistema de reseñas y calificaciones
+- [ ] Notificaciones en tiempo real
+- [ ] Integración con servicios de envío
+
+## 📝 Notas de Desarrollo
+
+- El proyecto utiliza el **App Router** de Next.js 16
+- Los componentes están organizados por funcionalidad
+- Se utiliza TypeScript para mayor seguridad de tipos
+- La validación se realiza con Zod para consistencia
+
+
