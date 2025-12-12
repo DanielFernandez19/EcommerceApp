@@ -4,7 +4,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { LoginResponse } from "@/types/auth";
-import { getAuthUser } from "@/utils/auth";
 
 interface AuthContextType {
   user: LoginResponse | null;
@@ -25,14 +24,12 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
   const [initializing, setInitializing] = useState(true);
   const router = useRouter();
 
-
-
-// Helper para leer cookies
+  // Helper para leer cookies
   const getAuthToken = (): string | null => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; auth_token=`);
     if (parts.length === 2) {
-      return parts.pop()?.split(';').shift() || null;
+      return parts.pop()?.split(";").shift() || null;
     }
     return null;
   };
@@ -43,28 +40,27 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
     const parts = value.split(`; auth_user=`);
     if (parts.length === 2) {
       try {
-        const userData = parts.pop()?.split(';').shift();
+        const userData = parts.pop()?.split(";").shift();
         if (userData) {
           return JSON.parse(decodeURIComponent(userData));
         }
       } catch (error) {
-        console.error('Error parsing auth_user cookie:', error);
+        console.error("Error parsing auth_user cookie:", error);
       }
     }
     return null;
   };
 
-// Inicializar estado desde cookies
+  // Inicializar estado desde cookies
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         const token = getAuthToken();
-        
+
         if (token) {
           // Intentar obtener datos del usuario de las cookies
           const userData = getAuthUser();
           if (userData) {
-
             setUser(userData);
           } else {
             // Token inválido o expirado - limpiar y redirigir
@@ -72,11 +68,11 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
             router.push("/Login");
           }
         }
-        } catch (error) {
-          console.error('Error en inicialización:', error);
-          // Error al leer cookies - limpiar estado
-          setUser(null);
-        } finally {
+      } catch (error) {
+        console.error("Error en inicialización:", error);
+        // Error al leer cookies - limpiar estado
+        setUser(null);
+      } finally {
         setInitializing(false);
       }
     };
@@ -87,12 +83,17 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
   // Logout
   const logout = () => {
     // Limpiar cookies de autenticación
-    document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie = 'auth_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    
+    document.cookie =
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "auth_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Limpiar localStorage por si queda algo viejo
+    localStorage.removeItem("auth");
+
     // Limpiar estado
     setUser(null);
-    
+
     // Redirigir al login
     router.push("/Login");
   };
@@ -100,10 +101,11 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
   // Refresh auth - forzar re-lectura de cookies
   const refreshAuth = () => {
     const token = getAuthToken();
-    
+
     if (token) {
       // Intentar obtener datos del usuario de las cookies
       const userData = getAuthUser();
+      
       if (userData) {
         setUser(userData);
       } else {

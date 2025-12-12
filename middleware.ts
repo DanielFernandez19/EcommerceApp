@@ -12,7 +12,6 @@ export function middleware(request: NextRequest) {
 
     // Si no hay token o usuario, redirigir al login
     if (!token || !userCookie) {
-      console.log('Middleware: No token o user cookie found', { token: !!token, userCookie: !!userCookie });
       const loginUrl = new URL('/Login', request.url);
       return NextResponse.redirect(loginUrl);
     }
@@ -20,13 +19,12 @@ export function middleware(request: NextRequest) {
     // Validar que el usuario tenga rol de admin (1 o 2)
     try {
       const userData = JSON.parse(decodeURIComponent(userCookie));
+      
       if (![1, 2].includes(userData.idRole)) {
-        console.log('Middleware: User does not have admin role', userData.idRole);
         const loginUrl = new URL('/Login', request.url);
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
-      console.log('Middleware: Error parsing user cookie', error);
       const loginUrl = new URL('/Login', request.url);
       return NextResponse.redirect(loginUrl);
     }
@@ -45,7 +43,7 @@ export function middleware(request: NextRequest) {
   }
   */
 
-  // Forzar revalidación de cookies y prevenir cache
+// Forzar revalidación de cookies y prevenir cache
   const response = NextResponse.next();
   
   // Agregar headers para prevenir cache del navegador
@@ -56,6 +54,6 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-  export const config = {
-    matcher: ['/dashboard/:path*', '/Login', '/Register']
+export const config = {
+    matcher: ['/dashboard/:path*', '/Login', '/Register', '/']
   };

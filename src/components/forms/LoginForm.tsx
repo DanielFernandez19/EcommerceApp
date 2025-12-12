@@ -21,10 +21,14 @@ export function LoginForm() {
       password: "",
     },
     schema: loginSchema,
-    onSubmit: async (values) => {
+onSubmit: async (values) => {
       try {
+        console.log("🔥 LOGIN INICIADO");
+        
         // Hacer login directo con la API
         const response = await apiClient.post<any, LoginFormData>("auth/login", values);
+        
+        console.log("📡 RESPONSE API:", response);
         
         // Guardar token en cookie
         document.cookie = `auth_token=${response.token}; path=/; max-age=86400; secure; samesite=strict`;
@@ -37,27 +41,46 @@ export function LoginForm() {
           idRole: response.idRole || 1, // Default a 1 si no viene
           token: response.token
         };
+        
+        console.log("👤 USER DATA PARA COOKIES:", userData);
+        console.log("🔢 ROL DEL USUARIO:", userData.idRole);
+        
         document.cookie = `auth_user=${encodeURIComponent(JSON.stringify(userData))}; path=/; max-age=86400; secure; samesite=strict`;
+        
+        // Guardar en localStorage para consistencia (aunque no se use mucho)
+        localStorage.setItem("auth", JSON.stringify(userData));
+        
+        console.log("🍪 COOKIES SETEADAS");
+        console.log("💾 LOCALSTORAGE SETEADO");
         
         // Actualizar el contexto
         setUser(userData);
         
+        console.log("🔄 CONTEXTO ACTUALIZADO CON setUser");
+        
         // Forzar refresh del contexto para asegurar sincronización
         refreshAuth();
         
+        console.log("🔄 REFRESH AUTH EJECUTADO");
+        
         // Pequeña demora para asegurar que el contexto se actualice antes de la navegación
         setTimeout(() => {
+          console.log("⏰ TIMEOUT EJECUTADO - VERIFICANDO REDIRECCIÓN");
+          console.log("🎯 ROL PARA REDIRECCIÓN:", userData.idRole);
+          
           // Redirigir según el rol
           if (userData.idRole === 1 || userData.idRole === 2) {
+            console.log("🚀 REDIRIGIENDO A DASHBOARD");
             // Admin o Vendor → Dashboard
             router.push("/dashboard");
           } else {
+            console.log("🏠 REDIRIGIENDO A PROFILE");
             // User normal → Perfil o Landing
             router.push("/profile");
           }
         }, 100);
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("❌ LOGIN FAILED:", error);
         throw error; // Dejar que el useForm maneje el error
       }
     },

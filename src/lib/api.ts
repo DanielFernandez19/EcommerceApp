@@ -24,32 +24,6 @@ class ApiClient {
       "Content-Type": "application/json",
     };
 
-    // TEMPORALMENTE DESHABILITADO - No usamos tokens para autorización
-    // let token: string | undefined;
-
-    // // Try server-side first (Server Components/Actions)
-    // try {
-    //   const { cookies } = await import("next/headers");
-    //   const cookieStore = await cookies();
-    //   token = cookieStore.get("auth_token")?.value;
-    //   console.log("🔐 Server-side token encontrado:", !!token);
-    // } catch {
-    //   // Fallback to client-side (Client Components)
-    //   const value = `; ${document.cookie}`;
-    //   const parts = value.split(`; auth_token=`);
-    //   if (parts.length === 2) {
-    //     token = parts.pop()?.split(';').shift();
-    //   }
-    //   console.log("🔐 Client-side token encontrado:", !!token);
-    // }
-
-    // if (token) {
-    //   defaultHeaders["Authorization"] = `Bearer ${token}`;
-    //   console.log("🔑 Authorization header set");
-    // } else {
-    //   console.log("⚠️ No token found - request will be unauthenticated");
-    // }
-
     const config: RequestInit = {
       ...options,
       headers: {
@@ -84,7 +58,6 @@ class ApiClient {
         message: error instanceof Error ? error.message : "Network error",
       };
 
-      
       throw networkError;
     }
   }

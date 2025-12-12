@@ -28,8 +28,8 @@ export async function AuthLogin(
  * Función para eliminar el token (logout)
  */
 export function removeAuthToken(): void {
-  document.cookie =
-    "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  // Limpiar cookies de autenticación
+  document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
   document.cookie = "auth_user=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 }
 
