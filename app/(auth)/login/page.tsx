@@ -12,7 +12,7 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  async function handleLogin(e: React.FormEvent) {
+async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -20,11 +20,35 @@ function LoginContent() {
     try {
       const user = await login(email, password);
       
+      // Verificar si había un usuario anterior con rol diferente (para detectar cambios)
+      const previousUser = localStorage.getItem('lastUserRole');
+      const roleChanged = previousUser && previousUser !== user.idRole.toString();
+      
+      // Guardar el rol actual para la próxima verificación
+      localStorage.setItem('lastUserRole', user.idRole.toString());
+      
       // Redirigir según el rol
       if ([1, 2].includes(user.idRole)) {
-        router.push('/dashboard');
+        // Si el rol cambió, forzar recarga completa para evitar cache
+        if (roleChanged) {
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 100);
+        } else {
+          // Pequeño delay para asegurar que las cookies se guarden antes de la redirección
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 50);
+        }
       } else {
-        router.push('/');
+        // Si el rol cambió, forzar recarga completa para evitar cache
+        if (roleChanged) {
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 100);
+        } else {
+          router.push('/');
+        }
       }
     } catch (err: unknown) {
       let errorMessage = "Error desconocido";
