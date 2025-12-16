@@ -20,35 +20,21 @@ async function handleLogin(e: React.FormEvent) {
     try {
       const user = await login(email, password);
       
-      // Verificar si había un usuario anterior con rol diferente (para detectar cambios)
-      const previousUser = localStorage.getItem('lastUserRole');
-      const roleChanged = previousUser && previousUser !== user.idRole.toString();
-      
       // Guardar el rol actual para la próxima verificación
       localStorage.setItem('lastUserRole', user.idRole.toString());
       
       // Redirigir según el rol
+      // Para admin/vendor, usar window.location.href para forzar recarga completa
+      // Esto asegura que el middleware detecte las cookies y el contexto se inicialice correctamente
       if ([1, 2].includes(user.idRole)) {
-        // Si el rol cambió, forzar recarga completa para evitar cache
-        if (roleChanged) {
-          setTimeout(() => {
-            window.location.href = '/dashboard';
-          }, 100);
-        } else {
-          // Pequeño delay para asegurar que las cookies se guarden antes de la redirección
-          setTimeout(() => {
-            router.push('/dashboard');
-          }, 50);
-        }
+        // Pequeño delay para asegurar que las cookies se guarden antes de la redirección
+        // Usar window.location.href fuerza una recarga completa de la página
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 150);
       } else {
-        // Si el rol cambió, forzar recarga completa para evitar cache
-        if (roleChanged) {
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 100);
-        } else {
-          router.push('/');
-        }
+        // Para usuarios normales, usar router.push es suficiente
+        router.push('/');
       }
     } catch (err: unknown) {
       let errorMessage = "Error desconocido";

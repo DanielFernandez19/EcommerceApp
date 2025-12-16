@@ -17,6 +17,9 @@ interface LocationSelectsProps {
   required?: boolean;
   showLabels?: boolean;
   className?: string;
+  countryError?: string;
+  provinceError?: string;
+  cityError?: string;
 }
 
 export function LocationSelects({
@@ -31,10 +34,22 @@ export function LocationSelects({
   required = false,
   showLabels = true,
   className = "",
+  countryError,
+  provinceError,
+  cityError,
 }: LocationSelectsProps) {
-  // 🎯 Usar refs para evitar bucles de actualización
+  // 🎯 Usar refs para evitar bucles de actualización en el hook
   const countryIdRef = useRef(initialCountryId);
   const provinceIdRef = useRef(initialProvinceId);
+  
+  // Sincronizar refs con props cuando cambian
+  useEffect(() => {
+    countryIdRef.current = initialCountryId;
+  }, [initialCountryId]);
+  
+  useEffect(() => {
+    provinceIdRef.current = initialProvinceId;
+  }, [initialProvinceId]);
   
   const {
     countries,
@@ -48,19 +63,19 @@ export function LocationSelects({
   } = useLocationData(countryIdRef.current, provinceIdRef.current);
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const countryId = Number(e.target.value);
-    countryIdRef.current = countryId; // 🎯 Actualizar ref para evitar bucles
+    const countryId = Number(e.target.value) || 0;
+    countryIdRef.current = countryId;
     onCountryChange(countryId);
   };
 
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const provinceId = Number(e.target.value);
-    provinceIdRef.current = provinceId; // 🎯 Actualizar ref para evitar bucles
+    const provinceId = Number(e.target.value) || 0;
+    provinceIdRef.current = provinceId;
     onProvinceChange(provinceId);
   };
 
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityId = Number(e.target.value);
+    const cityId = Number(e.target.value) || 0;
     onCityChange(cityId);
   };
 
@@ -77,23 +92,25 @@ export function LocationSelects({
         <Select
           label={showLabels ? "País" : undefined}
           name="country"
-          value={countryIdRef.current}
+          value={initialCountryId}
           options={countries.map(c => ({ id: c.id, name: c.name }))}
           onChange={handleCountryChange}
           loading={loadingCountries}
           required={required}
           disabled={disabled || loading}
+          error={countryError}
         />
 
         <Select
           label={showLabels ? "Provincia" : undefined}
           name="province"
-          value={provinceIdRef.current}
+          value={initialProvinceId}
           options={provinces.map(p => ({ id: p.id, name: p.name }))}
           onChange={handleProvinceChange}
           loading={loadingProvinces}
           required={required}
-          disabled={disabled || loading || !countryIdRef.current}
+          disabled={disabled || loading || !initialCountryId}
+          error={provinceError}
         />
 
         <Select
@@ -104,7 +121,8 @@ export function LocationSelects({
           onChange={handleCityChange}
           loading={loadingCities}
           required={required}
-          disabled={disabled || loading || !provinceIdRef.current}
+          disabled={disabled || loading || !initialProvinceId}
+          error={cityError}
         />
       </div>
     </div>
