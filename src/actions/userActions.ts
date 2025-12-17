@@ -269,3 +269,103 @@ export async function createUser(userData: CreateUserData): Promise<boolean> {
     throw new Error(friendlyMessage);
   }
 }
+
+// Server Action para verificar si un email existe y obtener el usuario
+export async function getUserByEmail(email: string): Promise<User | null> {
+  try {
+    console.log("Buscando usuario con email:", email);
+    
+    // Obtener todos los usuarios usando el endpoint user/GetAll
+    const users = await apiClient.get<User[]>("user/GetAll");
+    
+    // Verificar que users sea un array válido
+    if (!Array.isArray(users)) {
+      console.error("La respuesta de user/GetAll no es un array:", users);
+      throw new Error("Error al obtener los usuarios. La respuesta no es válida.");
+    }
+    
+    // Buscar el usuario con el email proporcionado
+    const emailLower = email.toLowerCase().trim();
+    const user = users.find(
+      (user) => user.email?.toLowerCase().trim() === emailLower
+    );
+    
+    if (user) {
+      console.log(`Usuario encontrado con email ${email}, ID: ${user.id}`);
+      return user;
+    } else {
+      console.log(`No se encontró usuario con email ${email}`);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error buscando usuario por email:", error);
+    
+    // Si el error es 404, el endpoint no existe
+    if (error && typeof error === "object" && "status" in error) {
+      const apiError = error as { status: number; message?: string };
+      if (apiError.status === 404) {
+        throw new Error("El endpoint para obtener usuarios no está disponible. Por favor, contacta al administrador.");
+      }
+    }
+    
+    // Formatear el error a un mensaje amigable
+    const friendlyMessage = formatApiError(error);
+    throw new Error(friendlyMessage);
+  }
+}
+
+// Server Action para verificar si un email existe (mantener compatibilidad)
+export async function verifyEmailExists(email: string): Promise<boolean> {
+  const user = await getUserByEmail(email);
+  return user !== null;
+}
+
+// Server Action para resetear la contraseña usando el ID del usuario
+export async function resetPassword(
+  userId: string,
+  newPassword: string
+): Promise<boolean> {
+  try {
+    console.log("Reseteando contraseña para usuario ID:", userId);
+    
+    // Llamar al endpoint user/UpdatePass con el DTO que espera el backend
+    // El DTO tiene: Id (string) y newPassword (string)
+    // Usar PUT en lugar de POST (el error 405 indica que POST no está permitido)
+    const response = await apiClient.put<
+      { message: string } | { success: boolean },
+      { Id: string; newPassword: string }
+    >(`user/UpdatePass`, {
+      Id: userId, // Usar Id con mayúscula como espera el backend
+      newPassword,
+    });
+    
+    console.log("✅ Respuesta del backend (UpdatePass):", response);
+    
+    // Verificar si la respuesta indica éxito
+    if (response && typeof response === "object") {
+      if ("success" in response) {
+        return response.success === true;
+      }
+      
+      if ("message" in response) {
+        const message = String(response.message);
+        return (
+          message.includes("Updated") ||
+          message.includes("Update") ||
+          message.includes("successfully") ||
+          message.includes("actualizada") ||
+          message.includes("exitoso") ||
+          message.includes("actualizado")
+        );
+      }
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("❌ Error reseteando contraseña:", error);
+    
+    // Formatear el error a un mensaje amigable
+    const friendlyMessage = formatApiError(error);
+    throw new Error(friendlyMessage);
+  }
+}
