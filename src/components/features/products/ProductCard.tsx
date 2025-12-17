@@ -1,4 +1,5 @@
 import type { Product } from "@/types/product";
+import { useCartStore } from "app/dashboard/cart/store/cartStore";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? `${API_BASE_URL}${product.images[0].imageUrl}`
     : "/placeholder.png";
 //const imageUrl = product.images?.[0]?.imageUrl ?? "/placeholder.png";
+  const { addProduct } = useCartStore();
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden hover:border-violet-500 transition-all duration-300 group">
@@ -55,9 +57,19 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-xs text-gray-500 ml-1">ARS</span>
           </div>
 
-          <button className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors text-sm font-medium">
-            Agregar
-          </button>
+       <button
+        disabled={product.stock === 0}
+        onClick={() => addProduct(product.id)}
+        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+          ${
+            product.stock === 0
+              ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+              : "bg-violet-600 text-white hover:bg-violet-700"
+          }`}
+      >
+        Agregar
+      </button>
+
         </div>
       </div>
     </div>
