@@ -1,15 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Hero from "@/components/features/landing/Hero";
 import ProductGrid from "@/components/features/products/ProductGrid";
 import Contact from "@/components/features/landing/Contact";
 import Footer from "@/components/features/landing/Footer";
-import { PRODUCTS_DATA } from "@/data/products";
+import { getProducts } from "@/actions/products.actions";
+import type { Product } from "@/types/product";
+
 
 export default function LandingPage() {
-  // Productos destacados (primeros 4)
-  const featuredProducts = PRODUCTS_DATA.slice(0, 4);
+  //manejo de estado para productos
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    //llamda al backend
+    useEffect(() => {
+      getProducts()
+        .then(setProducts)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }, []);
+    const featuredProducts = products.slice(0, 4); //Producto destacados
+    const allProducts = products;  //Todos los productos
 
-  // Todos los productos
-  const allProducts = PRODUCTS_DATA;
+    //if (loading) {
+   // return (
+     // <div className="min-h-screen bg-black flex items-center justify-center">
+     //  <p className="text-white text-lg">Cargando productos...</p>
+     // </div>
+    //);
+ // }
 
   return (
     <div className="min-h-screen bg-black">
