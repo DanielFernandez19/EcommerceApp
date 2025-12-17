@@ -29,12 +29,12 @@ async function handleLogin(e: React.FormEvent) {
       if ([1, 2].includes(user.idRole)) {
         // Pequeño delay para asegurar que las cookies se guarden antes de la redirección
         // Usar window.location.href fuerza una recarga completa de la página
-        setTimeout(() => {
-          window.location.href = '/dashboard';
+          setTimeout(() => {
+            window.location.href = '/dashboard';
         }, 150);
       } else {
         // Para usuarios normales, usar router.push es suficiente
-        router.push('/');
+          router.push('/');
       }
     } catch (err: unknown) {
       let errorMessage = "Error desconocido";
