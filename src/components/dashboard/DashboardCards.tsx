@@ -12,6 +12,7 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import type { DashboardData } from "@/types/dashboard";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 
 interface DashboardCardsProps {
   data: DashboardData;
@@ -38,10 +39,12 @@ interface DashboardCard {
 
 export function DashboardCards({ data }: DashboardCardsProps) {
   const router = useRouter();
+  const { user } = useAuthContext();
 
   // Definir las cards con datos reales del servidor
   const dashboardCards: DashboardCard[] = [
-    {
+    // Card de Usuarios - Solo visible para Admin (rol 1)
+    ...(user?.idRole === 1 ? [{
       title: "Usuarios",
       description: "Gestión de usuarios y permisos del sistema",
       icon: <FiUsers className="w-8 h-8" />,
@@ -62,7 +65,7 @@ export function DashboardCards({ data }: DashboardCardsProps) {
           color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
         },
       ],
-    },
+    }] : []),
     {
       title: "Productos",
       description: "Catálogo de productos y gestión de inventario",
