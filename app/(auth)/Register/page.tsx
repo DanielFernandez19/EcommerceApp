@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TextInput, Select, ModalSuccess } from "@/components/ui";
 import { apiPost } from "@/lib/api";
@@ -10,7 +10,7 @@ import { registerSchema } from "@/schemas/registerSchema";
 import { setTimeout } from "timers";
 import Link from "next/link";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isAdminMode = searchParams.get("mode") === "admin";
@@ -383,5 +383,17 @@ isAdminMode ? "Crear usuario" : "Crear cuenta"
         )}
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 py-8 px-4 flex items-center justify-center">
+        <div className="text-white">Cargando...</div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }
