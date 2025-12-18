@@ -149,7 +149,7 @@ export function UserFormBase({
     };
 
     // Incluir password solo si es un usuario nuevo
-    if (isNewUser && 'password' in validationData && validationData.password) {
+    if (isNewUser && validationData.password) {
       userData.password = validationData.password;
     }
 
