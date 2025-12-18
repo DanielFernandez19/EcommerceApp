@@ -60,9 +60,9 @@ export default function Navigation() {
                 <div className="w-24 h-8 bg-violet-600 rounded-lg animate-pulse"></div>
               </div>
             ) : isAuthenticated ? (
-              // Usuario logueado - mostrar carrito y dropdown
+              // Usuario logueado - mostrar carrito (solo si no es admin) y dropdown
               <>
-                <CartWidget />
+                {user && user.idRole !== 1 && <CartWidget />}
                 <UserDropdown />
               </>
             ) : (

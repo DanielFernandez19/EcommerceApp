@@ -91,16 +91,56 @@ export default function UserDropdown() {
               Mi Perfil
             </Link>
 
-            <Link
-              href="/orders"
-              className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Mis Pedidos
-            </Link>
+            {/* Pedidos según el rol */}
+            {user.idRole === 1 ? (
+              // Admin (rol 1): Solo gestión de pedidos
+              <Link
+                href="/dashboard/orders"
+                className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Gestión de Pedidos
+              </Link>
+            ) : user.idRole === 2 ? (
+              // Vendor (rol 2): Mis pedidos y gestión de pedidos
+              <>
+                <Link
+                  href="/orders"
+                  className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  Mis Pedidos
+                </Link>
+                <Link
+                  href="/dashboard/orders"
+                  className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  Gestión de Pedidos
+                </Link>
+              </>
+            ) : (
+              // Usuario normal (rol 3): Solo mis pedidos
+              <Link
+                href="/orders"
+                className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                Mis Pedidos
+              </Link>
+            )}
 
             {/* Opción de administración - Solo para roles 1 y 2 */}
             {isAdmin && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Hero from "@/components/features/landing/Hero";
 import ProductGrid from "@/components/features/products/ProductGrid";
 import Contact from "@/components/features/landing/Contact";
@@ -151,18 +152,18 @@ export default function LandingPage() {
             Sumate a nuestra comunidad y recibí ofertas exclusivas cada semana.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
+            <Link
               href="/Register"
               className="bg-white text-violet-700 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
             >
               Crear Cuenta
-            </a>
-            <a
-              href="#products"
+            </Link>
+            <Link
+              href="/collection"
               className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-violet-700 transition-all duration-300"
             >
-              Ver Catálogo
-            </a>
+              Ver Colección
+            </Link>
           </div>
         </div>
       </section>

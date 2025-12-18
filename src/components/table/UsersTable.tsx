@@ -33,13 +33,13 @@ export default function UsersTable() {
             label: "Editar",
             color: "bg-blue-600 hover:bg-blue-500",
             icon: <FaEdit />,
-            onClick: (user: User) => router.push(`/users/edit/${user.id}`),
+            onClick: (user: User) => router.push(`/dashboard/abm/users/edit/${user.id}`),
           },
           {
             label: "Ver",
             color: "bg-green-600 hover:bg-green-500",
             icon: <FaEye />,
-            onClick: (user: User) => router.push(`/users/view/${user.id}`),
+            onClick: (user: User) => router.push(`/dashboard/abm/users/view/${user.id}`),
           },
           {
             label: "Borrar",

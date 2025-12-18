@@ -7,11 +7,10 @@ import {
   FiHome, 
   FiUsers, 
   FiShoppingBag, 
-  FiSettings, 
   FiX,
   FiLogOut,
   FiChevronRight,
-  FiPackage
+  FiDollarSign
 } from "react-icons/fi";
 import { useAuthContext } from "@/components/providers/AuthProvider";
 
@@ -42,16 +41,10 @@ const menuItems = [
     description: "Catálogo de productos"
   },
   {
-    title: "Stock",
-    href: "/dashboard/abm/stock",
-    icon: <FiPackage className="w-5 h-5" />,
-    description: "Gestión de stock"
-  },
-  {
-    title: "Configuración",
-    href: "/dashboard/settings",
-    icon: <FiSettings className="w-5 h-5" />,
-    description: "Ajustes del sistema"
+    title: "Ventas",
+    href: "/dashboard/orders",
+    icon: <FiDollarSign className="w-5 h-5" />,
+    description: "Gestión de pedidos"
   }
 ];
 

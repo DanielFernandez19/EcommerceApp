@@ -1,10 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { checkoutCart } from "../services/cart.service";
+import { useCartStore } from "../store/cartStore";
+
 interface Props {
   cart: any;
 }
 
 export default function CartSummary({ cart }: Props) {
+  const router = useRouter();
+  const { user } = useAuthContext();
+  const { loadCart } = useCartStore();
+  const [isProcessing, setIsProcessing] = useState(false);
+
   if (!cart || !cart.items) return null;
 
   const itemCount = cart.items.length;
@@ -12,6 +23,24 @@ export default function CartSummary({ cart }: Props) {
     return sum + (item.price * item.quantity);
   }, 0);
   const total = cart.total || subtotal;
+
+  const handleCheckout = async () => {
+    if (!user || isProcessing) return;
+
+    try {
+      setIsProcessing(true);
+      await checkoutCart(user.id);
+      // Recargar el carrito (debería estar vacío después del checkout)
+      await loadCart(user.id);
+      // Redirigir a la página de pedidos
+      router.push("/orders");
+    } catch (error) {
+      console.error("Error al confirmar pedido:", error);
+      alert(error instanceof Error ? error.message : "Error al confirmar el pedido. Por favor, intenta nuevamente.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 space-y-4">
@@ -42,8 +71,16 @@ export default function CartSummary({ cart }: Props) {
         </div>
       </div>
 
-      <button className="w-full bg-violet-600 hover:bg-violet-700 py-2 rounded-lg font-semibold text-white transition-colors">
-        Confirmar pedido
+      <button
+        onClick={handleCheckout}
+        disabled={isProcessing || !user || itemCount === 0}
+        className={`w-full py-2 rounded-lg font-semibold text-white transition-colors ${
+          isProcessing || !user || itemCount === 0
+            ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+            : "bg-violet-600 hover:bg-violet-700"
+        }`}
+      >
+        {isProcessing ? "Procesando..." : "Confirmar pedido"}
       </button>
     </div>
   );

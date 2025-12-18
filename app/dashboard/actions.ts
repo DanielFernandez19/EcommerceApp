@@ -1,42 +1,61 @@
 "use server";
 
-import { apiClient } from "@/lib/api";
 import type { DashboardData } from "@/types/dashboard";
+import { getUsersCount } from "@/actions/userActions";
+import { getProducts } from "@/actions/products.actions";
+import { getAllOrders } from "@/actions/orders.actions";
 
 // Server Action para obtener datos del dashboard
 export async function getDashboardData(): Promise<DashboardData> {
-  // El serverApiClient ya maneja la autenticación via cookies
-
   try {
-    // Aquí iría la llamada real a tu API/backend
-    // const response = await fetch(`${process.env.API_URL}/dashboard/stats`, {
-    //   headers: {
-    //     Authorization: `Bearer ${authToken}`,
-    //     "Content-Type": "application/json",
-    //   },
-    //   cache: "no-store", // Para datos en tiempo real
-    // });
+    // Obtener datos reales en paralelo
+    const [usersCount, products, orders] = await Promise.all([
+      getUsersCount().catch(() => 0),
+      getProducts().catch(() => []),
+      getAllOrders().catch(() => []),
+    ]);
+
+    // Calcular cantidad total de stock (suma de todos los stocks)
+    const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+
+    // Calcular ventas del mes actual
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
     
-    // const data = await response.json();
-    
-    // Mientras tanto, datos simulados pero desde el servidor
+    const monthlyOrders = orders.filter((order) => {
+      const orderDate = new Date(order.createdAt);
+      return (
+        orderDate.getMonth() === currentMonth &&
+        orderDate.getFullYear() === currentYear &&
+        order.status !== 5 // Excluir cancelados
+      );
+    });
+
+    const monthlySales = monthlyOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+
+    // Formatear ventas mensuales
+    const formattedSales = monthlySales >= 1000 
+      ? `$${(monthlySales / 1000).toFixed(1)}K`
+      : `$${monthlySales.toLocaleString("es-AR")}`;
+
     const data: DashboardData = {
       stats: {
         users: {
-          total: 1234,
-          trend: "up",
+          total: usersCount,
+          trend: "neutral", // Podríamos calcular la tendencia comparando con el mes anterior
         },
         products: {
-          total: 456,
-          trend: "up",
+          total: products.length,
+          trend: "neutral",
         },
         stock: {
-          inStock: 89,
+          inStock: totalStock,
           trend: "neutral",
         },
         sales: {
-          monthly: "$45.2K",
-          trend: "up",
+          monthly: formattedSales,
+          trend: "neutral",
         },
       },
       lastUpdated: new Date().toISOString(),

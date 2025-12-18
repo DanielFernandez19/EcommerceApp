@@ -47,3 +47,18 @@ export async function updateCartItemQuantity(id: number, quantity: number) {
 
   return res.json();
 }
+
+export async function checkoutCart(userId: string) {
+  const res = await fetch(`${API_URL}/Order/CreateOrder`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al confirmar pedido");
+  }
+
+  return res.json();
+}

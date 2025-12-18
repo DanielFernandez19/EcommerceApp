@@ -20,6 +20,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 //const imageUrl = product.images?.[0]?.imageUrl ?? "/placeholder.png";
   const { addProduct, cart, loadCart } = useCartStore();
   const { user } = useAuthContext();
+  
+  // Admin (rol 1) no puede comprar
+  const canPurchase = user && user.idRole !== 1;
 
   // Cargar carrito cuando el usuario esté disponible
   useEffect(() => {
@@ -94,11 +97,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {!isInCart ? (
             <button
-              disabled={product.stock === 0 || !user}
+              disabled={product.stock === 0 || !user || !canPurchase}
               onClick={handleAddToCart}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
                 ${
-                  product.stock === 0 || !user
+                  product.stock === 0 || !user || !canPurchase
                     ? "bg-gray-700 text-gray-400 cursor-not-allowed"
                     : "bg-violet-600 text-white hover:bg-violet-700"
                 }`}

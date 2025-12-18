@@ -84,7 +84,7 @@ export default function OrdersPage() {
 
   if (!user) {
     return (
-      <div className="p-6 text-center">
+      <div className="pt-10 p-6 text-center">
         <p className="text-gray-400">Debes iniciar sesión para ver tus pedidos</p>
       </div>
     );
@@ -92,7 +92,7 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div className="p-6 text-center">
+      <div className="pt-10 p-6 text-center">
         <p className="text-white">Cargando pedidos...</p>
       </div>
     );
@@ -100,7 +100,7 @@ export default function OrdersPage() {
 
   if (error) {
     return (
-      <div className="p-6 text-center">
+      <div className="pt-10 p-6 text-center">
         <p className="text-red-400 mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}
@@ -113,7 +113,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="pt-10 p-6 max-w-5xl mx-auto">
       <button
         onClick={() => router.push("/")}
         className="mb-6 flex items-center gap-2 text-violet-400 hover:text-violet-300 transition-colors"

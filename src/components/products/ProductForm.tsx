@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type {
   Product,
   CreateProductDto,
   UpdateProductDto,
 } from "@/types/product";
+import { getCategories, type Category } from "@/actions/products.actions";
 
 interface Props {
   initialData?: Product;
@@ -27,9 +28,30 @@ export default function ProductForm({
     stock: initialData?.stock ?? 0,
     categoryId: initialData?.categoryId ?? 1,
   });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const cats = await getCategories();
+        setCategories(cats);
+        // Si no hay categoría seleccionada y hay categorías disponibles, seleccionar la primera
+        if (!initialData?.categoryId && cats.length > 0) {
+          setForm(prev => ({ ...prev, categoryId: cats[0].id }));
+        }
+      } catch (error) {
+        console.error("Error al cargar categorías:", error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    loadCategories();
+  }, [initialData]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -121,16 +143,27 @@ export default function ProductForm({
       {/* Categoría */}
       <div className="space-y-1">
         <label className="text-sm text-gray-400">
-          Categoría (ID)
+          Categoría
         </label>
-        <input
-          type="number"
-          name="categoryId"
-          value={form.categoryId}
-          onChange={handleChange}
-          className="w-full p-2 rounded bg-gray-900 text-white border border-gray-700"
-          placeholder="Ej: 1"
-        />
+        {loadingCategories ? (
+          <div className="w-full p-2 rounded bg-gray-900 text-gray-400 border border-gray-700">
+            Cargando categorías...
+          </div>
+        ) : (
+          <select
+            name="categoryId"
+            value={form.categoryId}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-violet-500"
+            required
+          >
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       <button
