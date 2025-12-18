@@ -23,7 +23,7 @@ export default function ProtectedRoute({
         if (user.idRole === 3) {
           router.push('/'); // Usuario normal al landing
         } else {
-          router.push('/Login'); // Otros roles al login
+          router.push('/login'); // Otros roles al login
         }
       }
     }
