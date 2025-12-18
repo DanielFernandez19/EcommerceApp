@@ -6,7 +6,7 @@ import type {
   CreateProductDto,
   UpdateProductDto,
 } from "@/types/product";
-import { getCategories, type Category } from "@/actions/products.actions";
+import { getCategories, type Category } from "@/actions/apiUtils";
 
 interface Props {
   initialData?: Product;

@@ -6,7 +6,7 @@ import Hero from "@/components/features/landing/Hero";
 import ProductGrid from "@/components/features/products/ProductGrid";
 import Contact from "@/components/features/landing/Contact";
 import Footer from "@/components/features/landing/Footer";
-import { getProducts } from "@/actions/products.actions";
+import { getProducts } from "@/actions/apiUtils";
 import type { Product } from "@/types/product";
 
 

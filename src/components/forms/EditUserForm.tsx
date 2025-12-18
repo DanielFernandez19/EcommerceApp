@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateUser, type UpdateUserData } from "@/actions/userActions";
+import { updateUser, type UpdateUserData } from "@/actions/apiUtils";
 import { UserFormBase } from "./UserFormBase";
 import type { User } from "@/types/user";
 

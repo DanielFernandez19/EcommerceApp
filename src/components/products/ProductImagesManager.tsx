@@ -1,6 +1,6 @@
 "use client";
 
-import { uploadProductImage, deleteProductImage } from "@/actions/productImages.actions";
+import { uploadProductImage, deleteProductImage } from "@/actions/apiUtils";
 import type { ProductImage } from "@/types/product";
 
 interface Props {
@@ -20,7 +20,7 @@ export default function ProductImagesManager({ productId, images, onChange }: Pr
 
   // Borrar imagen
   const handleDelete = async (imageId: number) => {
-    await deleteProductImage(productId, imageId);
+    await deleteProductImage(imageId);
     onChange(); // recarga las imágenes
   };
 

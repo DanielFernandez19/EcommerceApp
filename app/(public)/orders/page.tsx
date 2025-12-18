@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/providers/AuthProvider";
-import { getOrdersByUser } from "@/actions/orders.actions";
+import { getOrdersByUser } from "@/actions/apiUtils";
 import type { Order } from "@/types/order";
 import { OrderStatus } from "@/types/order";
 

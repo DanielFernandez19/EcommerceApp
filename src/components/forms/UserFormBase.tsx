@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { LocationSelects } from "@/components/forms/LocationSelects";
 import type { User } from "@/types/user";
-import type { UpdateUserData } from "@/actions/userActions";
+import type { UpdateUserData } from "@/actions/apiUtils";
 import { newUserSchema, editUserSchema } from "@/schemas/userFormSchema";
 
 interface UserFormBaseProps {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Table from "@/components/ui/Table";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import type { Product } from "@/types/product";
-import { getProducts, deleteProduct } from "@/actions/products.actions";
+import { getProducts, deleteProduct } from "@/actions/apiUtils";
 
 export default function ProductsPage() {
   const router = useRouter();

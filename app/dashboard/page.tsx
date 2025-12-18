@@ -1,5 +1,5 @@
 import { DashboardCards } from "@/components/dashboard/DashboardCards";
-import { getDashboardData } from "./actions";
+import { getDashboardData } from "@/actions/apiUtils";
 
 export default async function DashboardPage() {
   // Obtener datos reales del servidor

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser, type CreateUserData } from "@/actions/userActions";
+import { createUser, type CreateUserData } from "@/actions/apiUtils";
 import { UserFormBase } from "@/components/forms/UserFormBase";
 import { ModalError } from "@/components/ui/ModalError";
 import { getFriendlyErrorMessage } from "@/utils/errorMessages";

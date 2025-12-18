@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/providers/AuthProvider";
-import { getAllOrders, updateOrderStatus } from "@/actions/orders.actions";
+import { getOrders, updateOrderStatus } from "@/actions/apiUtils";
 import type { Order } from "@/types/order";
 import { OrderStatus } from "@/types/order";
 
@@ -32,7 +32,7 @@ export default function DashboardOrdersPage() {
       try {
         setLoading(true);
         setError(null);
-        const allOrders = await getAllOrders();
+        const allOrders = await getOrders();
         setOrders(allOrders || []);
       } catch (err) {
         console.error("Error al cargar pedidos:", err);

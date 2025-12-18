@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getUserByEmail, resetPassword } from "@/actions/userActions";
+import { getUserByEmail, resetPassword } from "@/actions/apiUtils";
 import { resetPasswordSchema } from "@/schemas/auth";
 import type { ResetPasswordFormData } from "@/schemas/auth";
 

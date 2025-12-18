@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductGrid from "@/components/features/products/ProductGrid";
-import { getProducts } from "@/actions/products.actions";
+import { getProducts } from "@/actions/apiUtils";
 import type { Product } from "@/types/product";
 
 export default function CollectionPage() {

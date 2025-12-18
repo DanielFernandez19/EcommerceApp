@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { updateUser, type UpdateUserData } from "@/actions/userActions";
+import { updateUser, type UpdateUserData } from "@/actions/apiUtils";
 import { useAuthContext } from "@/components/providers/AuthProvider";
 import { UserFormBase } from "./UserFormBase";
 import { ModalSuccess } from "@/components/ui/ModalSuccess";
