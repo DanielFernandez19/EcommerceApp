@@ -35,3 +35,15 @@ export async function removeCartItem(id: number) {
 
   if (!res.ok) throw new Error("Error al eliminar item");
 }
+
+export async function updateCartItemQuantity(id: number, quantity: number) {
+  const res = await fetch(`${API_URL}/Cart/UpdateCartItemQuantity/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(quantity),
+  });
+
+  if (!res.ok) throw new Error("Error al actualizar cantidad");
+
+  return res.json();
+}

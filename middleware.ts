@@ -16,7 +16,13 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Validar que el usuario tenga rol de admin (1 o 2)
+    // Excepción: /dashboard/cart es accesible para todos los usuarios autenticados
+    if (pathname.startsWith('/dashboard/cart')) {
+      // Solo verificar que esté autenticado, no el rol
+      return NextResponse.next();
+    }
+
+    // Para otras rutas del dashboard, validar que el usuario tenga rol de admin (1 o 2)
     try {
       const userData = JSON.parse(decodeURIComponent(userCookie));
       

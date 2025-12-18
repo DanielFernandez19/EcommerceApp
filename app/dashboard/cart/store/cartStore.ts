@@ -1,35 +1,41 @@
 import { create } from "zustand";
-import { getCart, addItemToCart, removeCartItem } from "../services/cart.service";
-
-const USER_ID = "11111111-1111-1111-1111-111111111111";
+import { getCart, addItemToCart, removeCartItem, updateCartItemQuantity } from "../services/cart.service";
 
 interface CartState {
   cart: any | null;
   loading: boolean;
-  loadCart: () => Promise<void>;
-  addProduct: (productId: number) => Promise<void>;
-  removeItem: (id: number) => Promise<void>;
+  loadCart: (userId: string) => Promise<void>;
+  addProduct: (userId: string, productId: number) => Promise<void>;
+  removeItem: (userId: string, id: number) => Promise<void>;
+  updateQuantity: (userId: string, id: number, quantity: number) => Promise<void>;
 }
 
 export const useCartStore = create<CartState>((set) => ({
   cart: null,
   loading: false,
 
-  loadCart: async () => {
+  loadCart: async (userId: string) => {
     set({ loading: true });
-    const cart = await getCart(USER_ID);
+    const cart = await getCart(userId);
     set({ cart, loading: false });
   },
 
-  addProduct: async (productId) => {
-    await addItemToCart(USER_ID, productId, 1);
-    const cart = await getCart(USER_ID);
+  addProduct: async (userId: string, productId: number) => {
+    await addItemToCart(userId, productId, 1);
+    const cart = await getCart(userId);
     set({ cart });
   },
 
-  removeItem: async (id) => {
+  removeItem: async (userId: string, id: number) => {
     await removeCartItem(id);
-    const cart = await getCart(USER_ID);
+    const cart = await getCart(userId);
+    set({ cart });
+  },
+
+  updateQuantity: async (userId: string, id: number, quantity: number) => {
+    if (quantity < 1) return; // No permitir cantidades menores a 1
+    await updateCartItemQuantity(id, quantity);
+    const cart = await getCart(userId);
     set({ cart });
   },
 }));
