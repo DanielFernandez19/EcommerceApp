@@ -42,7 +42,7 @@ export function RegisterForm() {
 
         if (response.id) {
           // Redirigir al login después de registro exitoso
-          router.push("/login?registered=true");
+          router.push("/Login?registered=true");
         }
       } catch (error) {
         console.error("Registration failed:", error);
