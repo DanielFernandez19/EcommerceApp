@@ -7,12 +7,12 @@ import {
   FiHome, 
   FiUsers, 
   FiShoppingBag, 
-  FiSettings, 
   FiX,
   FiLogOut,
   FiChevronRight,
-  FiPackage
+  FiDollarSign
 } from "react-icons/fi";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -41,20 +41,25 @@ const menuItems = [
     description: "Catálogo de productos"
   },
   {
-    title: "Stock",
-    href: "/dashboard/abm/stock",
-    icon: <FiPackage className="w-5 h-5" />,
-    description: "Gestión de stock"
-  },
-  {
-    title: "Configuración",
-    href: "/dashboard/settings",
-    icon: <FiSettings className="w-5 h-5" />,
-    description: "Ajustes del sistema"
+    title: "Ventas",
+    href: "/dashboard/orders",
+    icon: <FiDollarSign className="w-5 h-5" />,
+    description: "Gestión de pedidos"
   }
 ];
 
 export default function Sidebar({ isOpen, onClose, pathname, onLogout }: SidebarProps) {
+  const { user } = useAuthContext();
+  
+  // Filtrar items del menú según el rol del usuario
+  // Solo Admin (rol 1) puede ver "Usuarios"
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (item.href === "/dashboard/abm/users") {
+      return user?.idRole === 1; // Solo visible para Admin
+    }
+    return true; // Mostrar todos los demás items
+  });
+
   return (
     <>
       {/* Mobile overlay */}
@@ -93,7 +98,7 @@ export default function Sidebar({ isOpen, onClose, pathname, onLogout }: Sidebar
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
-            {menuItems.map((item) => {
+            {filteredMenuItems.map((item) => {
               const isActive = pathname === item.href;
               
               return (

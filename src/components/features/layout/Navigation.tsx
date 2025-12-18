@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuthContext } from "@/components/providers/AuthProvider";
 import UserDropdown from "./UserDropdown";
+import CartWidget from "./CartWidget";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,8 +60,11 @@ export default function Navigation() {
                 <div className="w-24 h-8 bg-violet-600 rounded-lg animate-pulse"></div>
               </div>
             ) : isAuthenticated ? (
-              // Usuario logueado - mostrar dropdown
-              <UserDropdown />
+              // Usuario logueado - mostrar carrito (solo si no es admin) y dropdown
+              <>
+                {user && user.idRole !== 1 && <CartWidget />}
+                <UserDropdown />
+              </>
             ) : (
               // Usuario no logueado - mostrar botones de login/register
               <>

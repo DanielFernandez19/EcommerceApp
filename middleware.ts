@@ -16,10 +16,26 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Validar que el usuario tenga rol de admin (1 o 2)
+    // Excepción: /dashboard/cart es accesible para todos los usuarios autenticados
+    if (pathname.startsWith('/dashboard/cart')) {
+      // Solo verificar que esté autenticado, no el rol
+      return NextResponse.next();
+    }
+
+    // Para otras rutas del dashboard, validar que el usuario tenga rol de admin (1 o 2)
     try {
       const userData = JSON.parse(decodeURIComponent(userCookie));
       
+      // Protección especial para rutas de ABM de usuarios - Solo Admin (rol 1)
+      if (pathname.startsWith('/dashboard/abm/users')) {
+        if (userData.idRole !== 1) {
+          // Si es vendor (rol 2) o cualquier otro rol, redirigir al dashboard principal
+          const dashboardUrl = new URL('/dashboard', request.url);
+          return NextResponse.redirect(dashboardUrl);
+        }
+      }
+      
+      // Validar que el usuario tenga rol de admin o vendor (1 o 2) para el resto del dashboard
       if (![1, 2].includes(userData.idRole)) {
         const loginUrl = new URL('/Login', request.url);
         return NextResponse.redirect(loginUrl);

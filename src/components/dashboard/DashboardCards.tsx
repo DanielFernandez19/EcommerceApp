@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import {
   FiUsers,
   FiShoppingBag,
-  FiPackage,
   FiDollarSign,
   FiEye,
   FiEdit,
@@ -12,6 +11,7 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import type { DashboardData } from "@/types/dashboard";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 
 interface DashboardCardsProps {
   data: DashboardData;
@@ -38,10 +38,12 @@ interface DashboardCard {
 
 export function DashboardCards({ data }: DashboardCardsProps) {
   const router = useRouter();
+  const { user } = useAuthContext();
 
   // Definir las cards con datos reales del servidor
   const dashboardCards: DashboardCard[] = [
-    {
+    // Card de Usuarios - Solo visible para Admin (rol 1)
+    ...(user?.idRole === 1 ? [{
       title: "Usuarios",
       description: "Gestión de usuarios y permisos del sistema",
       icon: <FiUsers className="w-8 h-8" />,
@@ -62,7 +64,7 @@ export function DashboardCards({ data }: DashboardCardsProps) {
           color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
         },
       ],
-    },
+    }] : []),
     {
       title: "Productos",
       description: "Catálogo de productos y gestión de inventario",
@@ -86,32 +88,6 @@ export function DashboardCards({ data }: DashboardCardsProps) {
           icon: <FiEye />,
           onClick: () => router.push("/dashboard/abm/products"),
           color: "bg-green-100 text-green-700 hover:bg-green-200",
-        },
-      ],
-    },
-    {
-      title: "Stock",
-      description: "Gestión de inventario y control de stock",
-      icon: <FiPackage className="w-8 h-8" />,
-      href: "/dashboard/abm/stock",
-      color: "bg-purple-500",
-      stats: {
-        label: "Productos en stock",
-        value: data.stats.stock.inStock.toLocaleString(),
-        trend: data.stats.stock.trend,
-      },
-      actions: [
-        {
-          label: "Actualizar stock",
-          icon: <FiPlus />,
-          onClick: () => router.push("/dashboard/abm/stock/update"),
-          color: "bg-purple-600 hover:bg-purple-700",
-        },
-        {
-          label: "Ver todos",
-          icon: <FiEye />,
-          onClick: () => router.push("/dashboard/abm/stock"),
-          color: "bg-purple-100 text-purple-700 hover:bg-purple-200",
         },
       ],
     },

@@ -1,10 +1,16 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import type { Product } from "@/types/product";
+import { useCartStore } from "app/dashboard/cart/store/cartStore";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [isInCart, setIsInCart] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!.replace("/api", "");
 
@@ -12,10 +18,44 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? `${API_BASE_URL}${product.images[0].imageUrl}`
     : "/placeholder.png";
 //const imageUrl = product.images?.[0]?.imageUrl ?? "/placeholder.png";
+  const { addProduct, cart, loadCart } = useCartStore();
+  const { user } = useAuthContext();
+  
+  // Admin (rol 1) no puede comprar
+  const canPurchase = user && user.idRole !== 1;
+
+  // Cargar carrito cuando el usuario esté disponible
+  useEffect(() => {
+    if (user) {
+      loadCart(user.id);
+    }
+  }, [user, loadCart]);
+
+  // Verificar si el producto está en el carrito
+  useEffect(() => {
+    if (cart?.items && Array.isArray(cart.items)) {
+      const productInCart = cart.items.some(
+        (item: any) => item.productId === product.id || item.idProduct === product.id
+      );
+      setIsInCart(productInCart);
+    } else {
+      setIsInCart(false);
+    }
+  }, [cart, product.id]);
+
+  const handleAddToCart = async () => {
+    if (user) {
+      try {
+        await addProduct(user.id, product.id);
+        setIsInCart(true);
+      } catch (error) {
+        console.error("Error al agregar al carrito:", error);
+      }
+    }
+  };
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden hover:border-violet-500 transition-all duration-300 group">
-      
+    <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden hover:border-violet-500 transition-all duration-300 group relative">
       {/* Contenedor de imagen */}
       <div className="relative h-64 overflow-hidden bg-gray-800">
         <img
@@ -55,9 +95,37 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-xs text-gray-500 ml-1">ARS</span>
           </div>
 
-          <button className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors text-sm font-medium">
-            Agregar
-          </button>
+          {!isInCart ? (
+            <button
+              disabled={product.stock === 0 || !user || !canPurchase}
+              onClick={handleAddToCart}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+                ${
+                  product.stock === 0 || !user || !canPurchase
+                    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                    : "bg-violet-600 text-white hover:bg-violet-700"
+                }`}
+            >
+              Agregar
+            </button>
+          ) : (
+            <div className="px-4 py-2 rounded-md text-sm font-medium bg-green-600 text-white flex items-center gap-2">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              En carrito
+            </div>
+          )}
         </div>
       </div>
     </div>

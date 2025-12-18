@@ -50,3 +50,15 @@ export async function updateProduct(
 export async function deleteProduct(id: number): Promise<void> {
   return apiClient.delete(`/products/${id}`);
 }
+
+/**
+ * Obtener todas las categorías
+ */
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export async function getCategories(): Promise<Category[]> {
+  return apiClient.get<Category[]>("Products/GetCategories");
+}
