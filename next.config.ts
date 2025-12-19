@@ -12,12 +12,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Aumentar timeout para build
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
-  // Limitar concurrent workers
-  swcMinify: true,
 };
 
 export default nextConfig;
