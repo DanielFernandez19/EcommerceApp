@@ -40,6 +40,8 @@ export function DashboardCards({ data }: DashboardCardsProps) {
   const router = useRouter();
   const { user } = useAuthContext();
 
+  console.log("🎯 DashboardCards: User:", user, "Data:", data);
+
   // Definir las cards con datos reales del servidor
   const dashboardCards: DashboardCard[] = [
     // Card de Usuarios - Solo visible para Admin (rol 1)
@@ -54,7 +56,7 @@ export function DashboardCards({ data }: DashboardCardsProps) {
         {
           label: "Nuevo usuario",
           icon: <FiPlus />,
-          onClick: () => router.push("/register?mode=admin"),
+          onClick: () => router.push("/dashboard/abm/users/manage?mode=new"),
           color: "bg-blue-600 hover:bg-blue-700",
         },
         {
@@ -80,7 +82,7 @@ export function DashboardCards({ data }: DashboardCardsProps) {
         {
           label: "Nuevo producto",
           icon: <FiPlus />,
-          onClick: () => router.push("/dashboard/abm/products/new"),
+          onClick: () => router.push("/dashboard/abm/products/manage?mode=new"),
           color: "bg-green-600 hover:bg-green-700",
         },
         {
@@ -106,13 +108,13 @@ export function DashboardCards({ data }: DashboardCardsProps) {
         {
           label: "Reporte",
           icon: <FiEdit />,
-          onClick: () => router.push("/dashboard/sales/reports"),
+          onClick: () => router.push("/dashboard/orders"),
           color: "bg-orange-600 hover:bg-orange-700",
         },
         {
           label: "Ver detalles",
           icon: <FiEye />,
-          onClick: () => router.push("/dashboard/sales"),
+          onClick: () => router.push("/dashboard/orders"),
           color: "bg-orange-100 text-orange-700 hover:bg-orange-200",
         },
       ],

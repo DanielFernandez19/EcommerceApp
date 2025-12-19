@@ -33,7 +33,7 @@ export default function UsersPage() {
         
         <div className="mt-4 sm:mt-0">
           <button 
-            onClick={() => router.push("/dashboard/abm/users/new")}
+            onClick={() => router.push("/dashboard/abm/users/manage?mode=new")}
             className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
           >
             Nuevo usuario
@@ -52,13 +52,13 @@ export default function UsersPage() {
               color: "bg-blue-600 hover:bg-blue-700",
               icon: <FaEdit />,
               onClick: (user: User) =>
-                router.push(`/dashboard/abm/users/edit/${user.id}`),
+                router.push(`/dashboard/abm/users/manage?id=${user.id}&mode=edit`),
             },
             {
               label: "Ver",
               color: "bg-green-600 hover:bg-green-700",
               icon: <FaEye />,
-              onClick: (user: User) => router.push(`/dashboard/abm/users/view/${user.id}`),
+              onClick: (user: User) => router.push(`/dashboard/abm/users/manage?id=${user.id}&mode=view`),
             },
             {
               label: "Borrar",

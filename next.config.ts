@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // Solo para production build
+  ...(process.env.NODE_ENV === 'production' && { output: "export" }),
   trailingSlash: true,
   images: {
     unoptimized: true,

@@ -78,7 +78,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
 
   // Determinar qué layout mostrar
   const isABMPage = pathname.startsWith('/dashboard/abm');
-  const isDashboardHome = pathname === '/dashboard';
+  const isDashboardHome = pathname === '/dashboard' || pathname === '/dashboard/';
   const isOrdersPage = pathname.startsWith('/dashboard/orders');
   
   console.log("🎯 Dashboard Layout:", { pathname, isABMPage, isDashboardHome, isOrdersPage, user });

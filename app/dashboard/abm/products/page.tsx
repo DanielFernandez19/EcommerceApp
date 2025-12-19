@@ -30,7 +30,7 @@ export default function ProductsPage() {
 
         <div className="mt-4 sm:mt-0">
           <button
-            onClick={() => router.push("/dashboard/abm/products/new")}
+            onClick={() => router.push("/dashboard/abm/products/manage?mode=new")}
             className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
           >
             Nuevo producto
@@ -49,14 +49,14 @@ export default function ProductsPage() {
               color: "bg-blue-600 hover:bg-blue-700",
               icon: <FaEdit />,
               onClick: (product) =>
-                router.push(`/dashboard/abm/products/edit/${product.id}`),
+                router.push(`/dashboard/abm/products/manage?id=${product.id}&mode=edit`),
             },
             {
               label: "Ver",
               color: "bg-green-600 hover:bg-green-700",
               icon: <FaEye />,
               onClick: (product) =>
-                router.push(`/dashboard/abm/products/view/${product.id}`),
+                router.push(`/dashboard/abm/products/manage?id=${product.id}&mode=view`),
             },
             {
               label: "Borrar",

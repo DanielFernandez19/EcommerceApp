@@ -3,6 +3,11 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // En modo static export (production), no ejecutar middleware
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.next();
+  }
 
 // Si está tratando de acceder al dashboard o sus rutas hijas
   if (pathname.startsWith('/dashboard')) {
@@ -72,4 +77,4 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     matcher: ['/dashboard/:path*', '/login', '/register', '/']
-  };
+};

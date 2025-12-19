@@ -35,18 +35,138 @@ export type UpdateUserData = {
   idRole?: number;
 };
 
+// Productos mock para desarrollo
+function getMockProducts() {
+  return [
+    {
+      id: 1,
+      name: "Remera Urban Classic",
+      description:
+        "Remera básica de algodón premium con corte moderno. Ideal para el día a día.",
+      price: 12990,
+      stock: 45,
+      categoryId: 1,
+      storeId: 1,
+      discountPercentage: null,
+      images: [
+        {
+          id: 1,
+          imageUrl:
+            "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "Jogger Street Style",
+      description:
+        "Pantalón jogger con bolsillos laterales y elastizado en cintura. Comodidad garantizada.",
+      price: 18990,
+      stock: 32,
+      categoryId: 2,
+      storeId: 1,
+      discountPercentage: 10,
+      images: [
+        {
+          id: 2,
+          imageUrl:
+            "https://images.unsplash.com/photo-1594634313759-48e5e6dec363?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "Buzo Urban Pro",
+      description:
+        "Buzo con capucha y bolsillo canguro. Perfecto para climas frescos.",
+      price: 24990,
+      stock: 18,
+      categoryId: 3,
+      storeId: 1,
+      discountPercentage: null,
+      images: [
+        {
+          id: 3,
+          imageUrl:
+            "https://images.unsplash.com/photo-1556821840-3a1f8796a2ec?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: "Gorra City Snapback",
+      description:
+        "Gorra ajustable con logo bordado. Protección UV y estilo urbano.",
+      price: 8990,
+      stock: 67,
+      categoryId: 4,
+      storeId: 1,
+      discountPercentage: 15,
+      images: [
+        {
+          id: 4,
+          imageUrl:
+            "https://images.unsplash.com/photo-1576871335435-b9c28a219098?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+    {
+      id: 5,
+      name: "Camisa Business Casual",
+      description:
+        "Camisa de lino mezcla con diseño slim fit. Perfecta para oficina y salidas.",
+      price: 15990,
+      stock: 8,
+      categoryId: 1,
+      storeId: 1,
+      discountPercentage: null,
+      images: [
+        {
+          id: 5,
+          imageUrl:
+            "https://images.unsplash.com/photo-1596755094514-f87e340cc389?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+    {
+      id: 6,
+      name: "Jeans Slim Fit",
+      description:
+        "Jean clásico con corte slim y elastizado. Comodidad y estilo en uno.",
+      price: 21990,
+      stock: 25,
+      categoryId: 2,
+      storeId: 1,
+      discountPercentage: 20,
+      images: [
+        {
+          id: 6,
+          imageUrl:
+            "https://images.unsplash.com/photo-1542273915886-8504af30a253?w=300&h=400&fit=crop",
+        },
+      ],
+    },
+  ];
+}
+
 export async function getProducts(): Promise<any[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
-    return res.ok ? await res.json() : [];
+    if (res.ok) {
+      const data = await res.json();
+      return data.length > 0 ? data : getMockProducts();
+    }
+    return getMockProducts();
   } catch {
-    return [];
+    return getMockProducts();
   }
 }
 
 export async function getOrders(): Promise<any[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Order`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/Order/GetOrders`,
+    );
     return res.ok ? await res.json() : [];
   } catch {
     return [];
@@ -55,7 +175,9 @@ export async function getOrders(): Promise<any[]> {
 
 export async function getAllOrders(): Promise<any[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Order/GetAll`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/Order/GetOrders`,
+    );
     return res.ok ? await res.json() : [];
   } catch {
     return [];
