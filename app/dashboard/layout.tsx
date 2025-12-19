@@ -17,8 +17,9 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const { user, logout, initializing } = useAuthContext();
 
-  // Determinar si es la página del carrito (accesible para todos los usuarios autenticados)
+  // Determinar si es la página del carrito o pedidos (accesible para todos los usuarios autenticados)
   const isCartPage = pathname.startsWith('/dashboard/cart');
+  const isOrdersPage = pathname.startsWith('/dashboard/orders');
 
   // Validar acceso y redirigir si es necesario - UN SOLO useEffect
   useEffect(() => {
@@ -29,8 +30,8 @@ function DashboardContent({ children }: DashboardLayoutProps) {
         return;
       }
 
-      // Si es la página del carrito, solo verificar que esté autenticado
-      if (isCartPage) {
+      // Si es la página del carrito o pedidos, solo verificar que esté autenticado
+      if (isCartPage || isOrdersPage) {
         return;
       }
 
@@ -40,7 +41,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
         return;
       }
     }
-  }, [user, initializing, router, isCartPage]);
+  }, [user, initializing, router]);
 
   // Si está inicializando, mostrar loading breve
   if (initializing) {
@@ -59,8 +60,8 @@ function DashboardContent({ children }: DashboardLayoutProps) {
     return null;
   }
 
-  // Si es la página del carrito, renderizar sin restricciones de admin
-  if (isCartPage) {
+  // Si es la página del carrito o pedidos, renderizar sin restricciones de admin
+  if (isCartPage || isOrdersPage) {
     return (
       <div className="min-h-screen bg-black">
         <Navigation />
@@ -79,39 +80,13 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   // Determinar qué layout mostrar
   const isABMPage = pathname.startsWith('/dashboard/abm');
   const isDashboardHome = pathname === '/dashboard' || pathname === '/dashboard/';
-  const isOrdersPage = pathname.startsWith('/dashboard/orders');
   
-  console.log("🎯 Dashboard Layout:", { pathname, isABMPage, isDashboardHome, isOrdersPage, user });
+  console.log("🎯 Dashboard Layout:", { pathname, isABMPage, isDashboardHome, isOrdersPage, isCartPage, user });
 
  return (
     <div className="min-h-screen bg-gray-900">
       {/* ===== LAYOUT PARA PÁGINAS ABM ===== */}
       {isABMPage && (
-        <div className="flex h-screen bg-gray-900">
-          <Sidebar 
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            pathname={pathname}
-            onLogout={logout}
-          />
-          
-          <div className="flex-1 flex flex-col">
-            <TopBar 
-              pathname={pathname}
-              onMenuOpen={() => setSidebarOpen(true)}
-              showBreadcrumb={true}
-              showMenuButton={true}
-            />
-             
-            <main className="flex-1 p-6 overflow-auto">
-              {children}
-            </main>
-          </div>
-        </div>
-      )}
-
-      {/* ===== LAYOUT PARA PÁGINA DE ORDERS ===== */}
-      {isOrdersPage && (
         <div className="flex h-screen bg-gray-900">
           <Sidebar 
             isOpen={sidebarOpen}
