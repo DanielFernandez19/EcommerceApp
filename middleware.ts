@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
 
     // Si no hay token o usuario, redirigir al login
     if (!token || !userCookie) {
-      const loginUrl = new URL('/Login', request.url);
+      const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -37,11 +37,11 @@ export function middleware(request: NextRequest) {
       
       // Validar que el usuario tenga rol de admin o vendor (1 o 2) para el resto del dashboard
       if (![1, 2].includes(userData.idRole)) {
-        const loginUrl = new URL('/Login', request.url);
+        const loginUrl = new URL('/login', request.url);
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
-      const loginUrl = new URL('/Login', request.url);
+      const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }
   }
@@ -71,5 +71,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/Login', '/Register', '/']
+    matcher: ['/dashboard/:path*', '/login', '/register', '/']
   };

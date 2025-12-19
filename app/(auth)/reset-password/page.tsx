@@ -146,7 +146,7 @@ function ResetPasswordContent() {
         setSuccess(true);
         // Redirigir al login después de 2 segundos
         setTimeout(() => {
-          router.push("/Login");
+          router.push("/login");
         }, 2000);
       } else {
         setError("No se pudo resetear la contraseña. Por favor, intenta nuevamente.");
@@ -355,7 +355,7 @@ function ResetPasswordContent() {
         <div className="mt-6 text-center">
           <p className="text-gray-400 text-sm">
             ¿Recordaste tu contraseña?{" "}
-            <Link href="/Login" className="text-violet-400 hover:text-violet-300 transition-colors">
+            <Link href="/login" className="text-violet-400 hover:text-violet-300 transition-colors">
               Inicia sesión aquí
             </Link>
           </p>

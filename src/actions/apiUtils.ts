@@ -46,7 +46,7 @@ export async function getProducts(): Promise<any[]> {
 
 export async function getOrders(): Promise<any[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Order`);
     return res.ok ? await res.json() : [];
   } catch {
     return [];
@@ -55,7 +55,7 @@ export async function getOrders(): Promise<any[]> {
 
 export async function getAllOrders(): Promise<any[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/GetAll`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Order/GetAll`);
     return res.ok ? await res.json() : [];
   } catch {
     return [];
@@ -64,7 +64,9 @@ export async function getAllOrders(): Promise<any[]> {
 
 export async function getOrdersByUser(userId: string): Promise<any[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/user/${userId}`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/Order/GetOrdersByUser/${userId}`,
+    );
     return res.ok ? await res.json() : [];
   } catch {
     return [];
@@ -73,7 +75,9 @@ export async function getOrdersByUser(userId: string): Promise<any[]> {
 
 export async function getUsersCount(): Promise<number> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/GetUsersCount`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/GetUsersCount`,
+    );
     return res.ok ? await res.json() : 0;
   } catch {
     return 0;
@@ -83,8 +87,8 @@ export async function getUsersCount(): Promise<number> {
 export async function createProduct(data: any): Promise<any> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     return res.ok ? await res.json() : null;
@@ -95,11 +99,14 @@ export async function createProduct(data: any): Promise<any> {
 
 export async function createUser(data: any): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/CreateUser`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/User/CreateUser`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
     return res.ok;
   } catch {
     return false;
@@ -108,9 +115,9 @@ export async function createUser(data: any): Promise<boolean> {
 
 export async function getUserByEmail(email: string): Promise<any> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/GetAll`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/GetAll`);
     if (!res.ok) return null;
-    
+
     const users = await res.json();
     return users.find((user: any) => user.email === email);
   } catch {
@@ -118,13 +125,19 @@ export async function getUserByEmail(email: string): Promise<any> {
   }
 }
 
-export async function resetPassword(userId: string, newPassword: string): Promise<boolean> {
+export async function resetPassword(
+  userId: string,
+  newPassword: string,
+): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/UpdatePass`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ Id: userId, newPassword }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/User/UpdatePass`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Id: userId, newPassword }),
+      },
+    );
     return res.ok;
   } catch {
     return false;
@@ -133,20 +146,28 @@ export async function resetPassword(userId: string, newPassword: string): Promis
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Products/GetCategories`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/Products/GetCategories`,
+    );
     return res.ok ? await res.json() : [];
   } catch {
     return [];
   }
 }
 
-export async function updateUser(userId: string, userData: UpdateUserData): Promise<boolean> {
+export async function updateUser(
+  userId: string,
+  userData: UpdateUserData,
+): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/UpdateUser`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/UpdateUser`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      },
+    );
     return res.ok;
   } catch {
     return false;
@@ -155,24 +176,33 @@ export async function updateUser(userId: string, userData: UpdateUserData): Prom
 
 export async function deleteProduct(id: number): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
-      method: 'DELETE',
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
     return res.ok;
   } catch {
     return false;
   }
 }
 
-export async function uploadProductImage(productId: number, imageFile: File): Promise<any> {
+export async function uploadProductImage(
+  productId: number,
+  imageFile: File,
+): Promise<any> {
   try {
     const formData = new FormData();
-    formData.append('file', imageFile);
-    
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}/images`, {
-      method: 'POST',
-      body: formData,
-    });
+    formData.append("file", imageFile);
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/products/${productId}/images`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
     return res.ok ? await res.json() : null;
   } catch {
     return null;
@@ -181,22 +211,31 @@ export async function uploadProductImage(productId: number, imageFile: File): Pr
 
 export async function deleteProductImage(imageId: number): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/images/${imageId}`, {
-      method: 'DELETE',
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/products/images/${imageId}`,
+      {
+        method: "DELETE",
+      },
+    );
     return res.ok;
   } catch {
     return false;
   }
 }
 
-export async function updateOrderStatus(orderId: number, status: number): Promise<boolean> {
+export async function updateOrderStatus(
+  orderId: number,
+  status: number,
+): Promise<boolean> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/status`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/Order/UpdateOrderStatus/${orderId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      },
+    );
     return res.ok;
   } catch {
     return false;
@@ -219,7 +258,7 @@ export async function getDashboardData() {
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
-    
+
     const monthlyOrders = orders.filter((order) => {
       const orderDate = new Date(order.createdAt);
       return (
@@ -229,12 +268,16 @@ export async function getDashboardData() {
       );
     });
 
-    const monthlySales = monthlyOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+    const monthlySales = monthlyOrders.reduce(
+      (sum, order) => sum + (order.totalAmount || 0),
+      0,
+    );
 
     // Formatear ventas mensuales
-    const formattedSales = monthlySales >= 1000 
-      ? `$${(monthlySales / 1000).toFixed(1)}K`
-      : `$${monthlySales.toLocaleString("es-AR")}`;
+    const formattedSales =
+      monthlySales >= 1000
+        ? `$${(monthlySales / 1000).toFixed(1)}K`
+        : `$${monthlySales.toLocaleString("es-AR")}`;
 
     return {
       stats: {
@@ -259,7 +302,7 @@ export async function getDashboardData() {
     };
   } catch (error) {
     console.error("Error obteniendo datos del dashboard:", error);
-    
+
     // Datos de fallback
     return {
       stats: {

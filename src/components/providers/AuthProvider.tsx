@@ -65,7 +65,7 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
           } else {
             // Token inválido o expirado - limpiar y redirigir
             setUser(null);
-            router.push("/Login");
+            router.push("/login");
           }
         }
       } catch (error) {
@@ -95,7 +95,7 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
     setUser(null);
 
     // Redirigir al login
-    router.push("/Login");
+    router.push("/login");
   };
 
   // Refresh auth - forzar re-lectura de cookies
@@ -111,7 +111,7 @@ export function AuthenticationProvider({ children }: { children: ReactNode }) {
       } else {
         // Token inválido o expirado - limpiar y redirigir
         setUser(null);
-        router.push("/Login");
+    router.push("/login");
       }
     } else {
       setUser(null);

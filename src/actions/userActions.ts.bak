@@ -78,7 +78,7 @@ export async function getUserById(userId: string): Promise<User | null> {
     console.log("Fetching user with ID:", userId);
 
     // Obtener datos del usuario usando el server API client
-    const user = await apiClient.get<User>(`user/GetUserById/${userId}`);
+    const user = await apiClient.get<User>(`User/GetUserById/${userId}`);
 
     console.log("User fetched:", user);
     return user;
@@ -91,7 +91,7 @@ export async function getUserById(userId: string): Promise<User | null> {
 // Server Action para obtener el total de usuarios
 export async function getUsersCount(): Promise<number> {
   try {
-    const count = await apiClient.get<number>(`user/GetUsersCount`);
+    const count = await apiClient.get<number>(`User/GetUsersCount`);
     return count;
   } catch (error) {
     return 0;
@@ -145,7 +145,7 @@ export async function updateUser(
     const response = await apiClient.put<
       { message: string },
       typeof userUpdate
-    >(`user/UpdateUser`, userUpdate);
+    >(`User/UpdateUser`, userUpdate);
 
     console.log("✅ Respuesta del backend:", response);
 
@@ -229,10 +229,10 @@ export async function createUser(userData: CreateUserData): Promise<boolean> {
     });
 
     // El backend puede devolver el usuario creado (con id) o un objeto con message
-    const response = await apiClient.post<any, typeof userCreate>(
-      `user/CreateUser`,
-      userCreate
-    );
+     const response = await apiClient.post<any, typeof userCreate>(
+       `User/CreateUser`,
+       userCreate
+     );
 
     console.log("✅ Respuesta del backend:", response);
 
@@ -275,8 +275,8 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   try {
     console.log("Buscando usuario con email:", email);
     
-    // Obtener todos los usuarios usando el endpoint user/GetAll
-    const users = await apiClient.get<User[]>("user/GetAll");
+    // Obtener todos los usuarios usando el endpoint User/GetAll
+    const users = await apiClient.get<User[]>("User/GetAll");
     
     // Verificar que users sea un array válido
     if (!Array.isArray(users)) {
@@ -334,7 +334,7 @@ export async function resetPassword(
     const response = await apiClient.put<
       { message: string } | { success: boolean },
       { Id: string; newPassword: string }
-    >(`user/UpdatePass`, {
+     >(`User/UpdatePass`, {
       Id: userId, // Usar Id con mayúscula como espera el backend
       newPassword,
     });

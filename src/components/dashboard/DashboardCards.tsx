@@ -54,7 +54,7 @@ export function DashboardCards({ data }: DashboardCardsProps) {
         {
           label: "Nuevo usuario",
           icon: <FiPlus />,
-          onClick: () => router.push("/Register?mode=admin"),
+          onClick: () => router.push("/register?mode=admin"),
           color: "bg-blue-600 hover:bg-blue-700",
         },
         {

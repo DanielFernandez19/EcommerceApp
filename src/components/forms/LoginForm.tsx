@@ -129,7 +129,7 @@ onSubmit: async (values) => {
         <p className="text-sm text-gray-600">
           ¿No tienes cuenta?{" "}
           <Link 
-            href="/Register" 
+            href="/register" 
             className="text-blue-600 hover:underline font-medium"
           >
             Regístrate aquí

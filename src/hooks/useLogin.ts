@@ -25,7 +25,7 @@ export function useLogin(): UseLoginReturn {
 
     try {
       const loginData: LoginRequest = { email, password };
-      const response = await apiPost<LoginResponse, LoginRequest>("auth/login", loginData);
+      const response = await apiPost<LoginResponse, LoginRequest>("Auth/login", loginData);
       
       // Guardar token en cookies
       document.cookie = `auth_token=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; secure; samesite=strict`;

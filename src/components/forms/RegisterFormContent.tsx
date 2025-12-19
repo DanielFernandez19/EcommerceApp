@@ -138,7 +138,7 @@ export function RegisterFormContent() {
             router.push("/dashboard");
           } else {
             // User normal → Login para que inicie sesión
-            router.push("/Login");
+            router.push("/login");
           }
         }, 3000);
       }
@@ -370,7 +370,7 @@ export function RegisterFormContent() {
             <p className="text-gray-400 text-sm">
               ¿Ya tienes cuenta?{" "}
               <Link
-                href="/Login"
+                href="/login"
                 className="text-violet-400 hover:text-violet-300 transition-colors"
               >
                 Inicia sesión aquí

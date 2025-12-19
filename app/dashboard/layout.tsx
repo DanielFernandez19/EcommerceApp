@@ -25,7 +25,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
     if (!initializing) {
       // Si no hay usuario, redirigir al login
       if (!user) {
-        router.push('/Login');
+        router.push('/login');
         return;
       }
 
@@ -80,12 +80,14 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   const isABMPage = pathname.startsWith('/dashboard/abm');
   const isDashboardHome = pathname === '/dashboard';
   const isOrdersPage = pathname.startsWith('/dashboard/orders');
+  
+  console.log("🎯 Dashboard Layout:", { pathname, isABMPage, isDashboardHome, isOrdersPage, user });
 
-return (
+ return (
     <div className="min-h-screen bg-gray-900">
       {/* ===== LAYOUT PARA PÁGINAS ABM ===== */}
       {isABMPage && (
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-gray-900">
           <Sidebar 
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
@@ -110,7 +112,7 @@ return (
 
       {/* ===== LAYOUT PARA PÁGINA DE ORDERS ===== */}
       {isOrdersPage && (
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-gray-900">
           <Sidebar 
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
@@ -135,7 +137,7 @@ return (
 
       {/* ===== LAYOUT PARA DASHBOARD HOME ===== */}
       {isDashboardHome && (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gray-900">
           <TopBar 
             pathname={pathname}
             onMenuOpen={() => setSidebarOpen(true)}
